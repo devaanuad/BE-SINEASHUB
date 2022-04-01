@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FilmController;
 use App\Http\Controllers\GenreController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,6 @@ Route::get('/', function () {
 });
 
 Route::resource('/admin/genre', GenreController::class);
+Route::resource('/admin/film', FilmController::class);
 
 require __DIR__.'/auth.php';

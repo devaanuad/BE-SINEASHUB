@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('tumbnail');
             $table->text('deskripsi');
             $table->text('url_trailer');
+            $table->string('status');
             $table->timestamps();
         });
     }

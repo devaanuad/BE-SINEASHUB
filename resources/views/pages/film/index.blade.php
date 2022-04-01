@@ -6,9 +6,9 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Data Genre</h1>
+            <h1 class="h3 mb-0 text-gray-800">Data Film</h1>
             <a href="{{ route("genre.create") }}" class="btn btn-sm btn-primary shadow-sm">
-                <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Data Genre
+                <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Data Film
             </a>
         </div>
 
@@ -25,20 +25,28 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nama</th>
+                            <th>judul</th>
+                            <th>Deskripsi</th>
+                            <th>Tumbnail</th>
+                            <th>Url Trailer</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($genres as $genre)
+                        @forelse ($films as $film)
                             <tr>
-                                <td>{{ $genre->id }}</td>
-                                <td>{{ $genre->name }}</td>
+                                <td>{{ $film->id }}</td>
+                                <td>{{ $film->judul }}</td>
+                                <td>{{ $film->deskripsi }}</td>
+                                <td>{{ $film->tumbnail }}</td>
+                                <td>{{ $film->url_trailer }}</td>
+                                <td class="{{ $film->status == 'coming soon' ? 'text-warning' : 'text-primary' }}">{{ $film->status }}</td>
                                 <td class="d-flex justify-content-center">
-                                    <a href="{{ route('genre.edit', $genre->id) }}" class="btn btn-info">
+                                    <a href="{{ route('film.edit', $film->id) }}" class="btn btn-info">
                                         <i class="fa fa-pencil-alt"></i>
                                     </a>
-                                    <form action="{{ route('genre.destroy', $genre->id) }}" method="post" class="d-inline">
+                                    <form action="{{ route('film.destroy', $film->id) }}" method="post" class="d-inline">
                                         @csrf
                                         @method('delete')
 
@@ -50,7 +58,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td class="text-center" colspan="5">
+                                <td class="text-center" colspan="7">
                                     Data Kosong
                                 </td>
                             </tr>

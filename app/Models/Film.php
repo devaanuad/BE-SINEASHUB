@@ -10,7 +10,7 @@ class Film extends Model
     use HasFactory;
 
     protected $fillable = [
-            'judul', 'deskripsi','tumbnail','url_trailer'
+            'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
     ];
 
     // public function filmDetail(){

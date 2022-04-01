@@ -26,7 +26,7 @@ class GenreController extends Controller
      */
     public function create()
     {
-        return view('pages.genre.tambah');
+        return view('pages.genre.create');
     }
 
     /**

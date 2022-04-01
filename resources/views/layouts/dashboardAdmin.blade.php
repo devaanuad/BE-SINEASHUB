@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Dashboard</title>
+  <title>SB Admin 2 -</title>
 
   @include('includes.style')
 
@@ -17,45 +17,29 @@
 
 <body id="page-top">
 
-  <!-- Page Wrapper -->
   <div id="wrapper">
-
-    <!-- Sidebar -->
+      {{-- sidebar --}}
     @include('includes.sidebar')
-    <!-- End of Sidebar -->
 
-    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
-      <!-- Main Content -->
-      <div id="content">
+      <div id="content" class="bg-white">
 
-        <!-- Topbar -->
+        {{-- navbar --}}
         @include('includes.navbar')
-        <!-- End of Topbar -->
 
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
-
-         @yield('content')
-
-        </div>
-        <!-- /.container-fluid -->
+        <!--  Content -->
+        @yield('content')
 
       </div>
-      <!-- End of Main Content -->
 
       <!-- Footer -->
-     @include('includes.footer')
-      <!-- End of Footer -->
 
+      @include('includes.footer')
     </div>
-    <!-- End of Content Wrapper -->
 
   </div>
-  <!-- End of Page Wrapper -->
 
-  <!-- Scroll to Top Button-->
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
@@ -79,7 +63,7 @@
     </div>
   </div>
 
-  @include('includes.script')
+ @include('includes.script')
 
 </body>
 

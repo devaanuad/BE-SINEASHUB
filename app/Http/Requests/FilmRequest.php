@@ -26,8 +26,9 @@ class FilmRequest extends FormRequest
         return [
             'judul' => 'required|string',
             'tumbnail' => 'required|image',
-            'description' => 'required|string',
-            'url_trailer' => 'required'
+            'deskripsi' => 'required|string',
+            'url_trailer' => 'required',
+            'status' => 'required|in:coming soon,rilis',
         ];
     }
 }

@@ -17,7 +17,7 @@ class FilmController extends Controller
     {
         $films = Film::all();
 
-        return view('pages.film.index');
+        return view('pages.film.index', compact('films'));
     }
 
     /**
@@ -27,7 +27,7 @@ class FilmController extends Controller
      */
     public function create()
     {
-        return view('pages.film.index');
+        return view('pages.film.create');
     }
 
     /**
