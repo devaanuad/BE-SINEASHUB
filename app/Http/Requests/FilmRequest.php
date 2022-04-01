@@ -29,6 +29,11 @@ class FilmRequest extends FormRequest
             'deskripsi' => 'required|string',
             'url_trailer' => 'required',
             'status' => 'required|in:coming soon,rilis',
+            'url_film' => 'nullable',
+            'rating' => 'nullable',
+            'tanggal_terbit' => 'required|date',
+            'harga' => 'required|integer',
+
         ];
     }
 }

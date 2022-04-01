@@ -7,7 +7,7 @@
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Data Film</h1>
-            <a href="{{ route("genre.create") }}" class="btn btn-sm btn-primary shadow-sm">
+            <a href="{{ route("film.create") }}" class="btn btn-sm btn-primary shadow-sm">
                 <i class="fas fa-plus fa-sm text-white-50"></i> Tambah Data Film
             </a>
         </div>
@@ -45,6 +45,9 @@
                                 <td class="d-flex justify-content-center">
                                     <a href="{{ route('film.edit', $film->id) }}" class="btn btn-info">
                                         <i class="fa fa-pencil-alt"></i>
+                                    </a>
+                                    <a href="{{ route('film.show', $film->id) }}" class="btn btn-warning">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                     <form action="{{ route('film.destroy', $film->id) }}" method="post" class="d-inline">
                                         @csrf

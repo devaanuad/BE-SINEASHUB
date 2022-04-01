@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FilmRequest;
 use App\Models\Film;
+use App\Models\FilmDetails;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FilmController extends Controller
@@ -38,7 +40,25 @@ class FilmController extends Controller
      */
     public function store(FilmRequest $request)
     {
-        Film::create($request->all());
+
+        // create film
+        $film = Film::create([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'tumbnail' => $request->tumbnail,
+            'url_trailer' => $request->url_trailer,
+            'status' => $request->status,
+        ]);
+
+        // create detail films
+        FilmDetails::create([
+            'film_id' => $film->id,
+            'url_film' => $request->url_film,
+            'tahun' => Carbon::now()->format('Y'),
+            'tanggal_terbit' => $request->tanggal_terbit,
+            'harga' => $request->harga,
+        ]);
+
         return redirect()->route('film.index');
     }
 
@@ -50,7 +70,9 @@ class FilmController extends Controller
      */
     public function show($id)
     {
-        //
+        $film = FilmDetails::where('film_id',$id)->first();
+        // return response()->json($film, 200);
+        return view('pages.film.show', compact('film'));
     }
 
     /**
