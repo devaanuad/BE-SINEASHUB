@@ -70,8 +70,7 @@ class FilmController extends Controller
      */
     public function show($id)
     {
-        $film = FilmDetails::where('film_id',$id)->first();
-        // return response()->json($film, 200);
+        $film = FilmDetails::where('film_id', $id)->first();
         return view('pages.film.show', compact('film'));
     }
 
@@ -84,7 +83,7 @@ class FilmController extends Controller
     public function edit($id)
     {
         $film = Film::findOrFail($id);
-        return view('pages.film.edit',compact('film'));
+        return view('pages.film.edit', compact('film'));
     }
 
     /**
@@ -99,7 +98,6 @@ class FilmController extends Controller
         $film = Film::findOrFail($id);
         $film->update($request->all());
         return redirect()->route('film.index');
-
     }
 
     /**
@@ -110,12 +108,29 @@ class FilmController extends Controller
      */
     public function destroy($id)
     {
-         try {
+        try {
             Film::findOrFail($id)->delete();
 
             return redirect()->route('film.index');
-         } catch (\Exception $th) {
-             throw $th;
-         }
+        } catch (\Exception $th) {
+            throw $th;
+        }
+    }
+
+    public function satu($id)
+    {
+        $films = Film::where('id', $id)->get();
+        return response()->json(['film' => $films],200);
+    }
+    public function semua()
+    {
+        $films = Film::all();
+        return response()->json(['film' => $films],200);
+    }
+
+    public function filmDetail($id)
+    {
+        $films = FilmDetails::where('film_id', $id)->get();
+        return response()->json(['detail_film' => $films],200);
     }
 }
