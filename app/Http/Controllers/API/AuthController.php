@@ -28,8 +28,18 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Berhasil Login',
-            'user' => $user,
+            'data' => $user,
             'token' => $token
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        # code...
+    }
+
+    public function logout()
+    {
+        # code...
     }
 }
