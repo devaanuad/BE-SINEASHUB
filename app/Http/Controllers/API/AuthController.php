@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // contoh respon
+
+   /* return response()->json([
+        'status' => 'success',
+        'message' => 'Berhasil Login',
+        'data' => $user,
+    ]); */
+
     public function Login(LoginRequest $request)
     {
         $credentials['role'] = 'user';
