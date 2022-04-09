@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     // contoh respon
 
-   /* return response()->json([
+    /* return response()->json([
         'status' => 'success',
         'message' => 'Berhasil Login',
         'data' => $user,
@@ -25,13 +24,13 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !\Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
         }
 
-        $token = $user->createToken('Token')->plainTextToken;
+        $token = $user->createToken('LoginToken')->plainTextToken;
 
         return response()->json([
             'status' => 'success',
@@ -41,13 +40,29 @@ class AuthController extends Controller
         ]);
     }
 
-    public function register(Request $request)
+    public function register(LoginRequest $request)
     {
-        # code...
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Hash::make($request->password),
+            'role' => 'user',
+            'google_id' => null
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil Register',
+        ]);
     }
 
     public function logout()
     {
-        # code...
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil Logout',
+        ]);
     }
 }

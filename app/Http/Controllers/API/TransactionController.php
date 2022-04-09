@@ -34,6 +34,7 @@ class TransactionController extends Controller
             'status' => 'success',
             'message' => 'Transaksi berhasil',
             'data' => $detail_transaction,
-            ], 200);
+            'status_code' => 200,
+            ]);
     }
 }

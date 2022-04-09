@@ -3,9 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\FilmController;
-use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\FilmController;
+use App\Http\Controllers\API\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +23,12 @@ use App\Http\Controllers\TransactionController;
 // });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/film', [FilmController::class, 'semua']);//dapetin semua data film
-    Route::get('/film/{id}', [FilmController::class, 'satu']);//dapetin satu film
-    Route::get('/film/detail/{id}', [FilmController::class, 'filmDetail']);//dapetin detail film
-    Route::post('/transaction', [TransactionController::class, 'store']);//lakukan transaksi
+    Route::get('/film', [FilmController::class, 'index']);
+    Route::get('/film/detail/{id}', [FilmController::class, 'showDetail']);
+    Route::post('/transaction', [TransactionController::class, 'store']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 //route untuk login dengan laravel sanctum
-Route::post('/login', [UserController::class, 'authenticate']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
