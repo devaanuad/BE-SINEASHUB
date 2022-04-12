@@ -116,26 +116,4 @@ class FilmController extends Controller
             throw $th;
         }
     }
-
-    public function satu($id)
-    {
-        $films = Film::where('id', $id)->get();
-        return response()->json(['film' => $films],200);
-    }
-    public function semua()
-    {
-        return response()->json(
-            [
-
-            ],
-        );
-        $films = Film::all();
-        return response()->json(['film' => $films],200);
-    }
-
-    public function filmDetail($id)
-    {
-        $films = FilmDetails::where('film_id', $id)->get();
-        return response()->json(['detail_film' => $films],200);
-    }
 }
