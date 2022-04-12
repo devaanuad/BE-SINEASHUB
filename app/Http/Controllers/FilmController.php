@@ -124,6 +124,11 @@ class FilmController extends Controller
     }
     public function semua()
     {
+        return response()->json(
+            [
+
+            ],
+        );
         $films = Film::all();
         return response()->json(['film' => $films],200);
     }
