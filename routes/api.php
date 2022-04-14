@@ -26,9 +26,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/film', [FilmController::class, 'index']);
     Route::get('/film/detail/{id}', [FilmController::class, 'showDetail']);
     Route::post('/transaction', [TransactionController::class, 'store']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'Logout']);
+    Route::get('/refresh', [AuthController::class, 'refreshToken']);
 });
 
 //route untuk login dengan laravel sanctum
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'Login']);
+Route::post('/register', [AuthController::class, 'Register']);
+
+//route for google authentication
+Route::get('/callback', [AuthController::class, "redirectToProvider"]);
+Route::get('/redirect', [AuthController::class, "handleProviderCallback"]);

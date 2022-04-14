@@ -17,7 +17,6 @@ class TransactionController extends Controller
         $transaction = Transaction::create([
             'user_id' => Auth::user()->id,
             'film_id' => $request->film_id,
-            'status' => 'pending',
         ]);
 
         //create detail transaction
@@ -26,8 +25,7 @@ class TransactionController extends Controller
             'nama_film' => $request->nama_film,
             'harga_beli' => $request->harga_beli,
             'tanggal_beli' => Carbon::now()->format('Y-m-d'),
-            'tanggal_berakhir' => Carbon::now()->addDays(2)->format('Y-m-d'),
-            'status' => 'pending',
+            'tanggal_berakhir' => Carbon::now()->addHours($request->film_expire)->format('Y-m-d'),
         ]);
 
         return response()->json([
