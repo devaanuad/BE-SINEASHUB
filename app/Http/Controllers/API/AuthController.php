@@ -42,7 +42,7 @@ class AuthController extends Controller
 
     public function register(LoginRequest $request)
     {
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => \Hash::make($request->password),
@@ -58,7 +58,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        $request->user()->currentAccessToken()->delete();
+        request()->user()->currentAccessToken()->delete();
 
         return response()->json([
             'status' => 'success',

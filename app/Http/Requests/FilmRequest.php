@@ -33,6 +33,7 @@ class FilmRequest extends FormRequest
             'rating' => 'nullable',
             'tanggal_terbit' => 'required|date',
             'harga' => 'required|integer',
+            'genre_id' => 'required'
 
         ];
     }

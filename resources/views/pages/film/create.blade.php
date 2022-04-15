@@ -70,6 +70,17 @@
                         <label for="harga">Harga</label>
                         <input type="number" name="harga" id="harga" placeholder="Masukkan jumlah harga film" value="{{ old('harga') }}" class="form-control">
                     </div>
+                    <div class="form-group">
+                        <label for="genre">Genre</label>
+                        @foreach ($genres as $genre)
+                            <div class="form-check">
+                                <input class="form-check-input" name="genre_id[]" type="checkbox" value="{{$genre->id}}" id="flexCheck{{$genre->name}}">
+                                <label class="form-check-label" for="flexCheck{{$genre->name}}">
+                                    {{$genre->name}} checkbox
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
 
                     <button type="submit" class="btn btn-primary btn-block">Simpan</button>
 
