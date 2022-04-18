@@ -12,4 +12,8 @@ class Aktor extends Model
     protected $fillable =[
         'film_id','nama','gambar'
     ];
+
+    public function film(){
+        $this->belongsTo(Film::class);
+    }
 }

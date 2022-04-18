@@ -15,7 +15,7 @@ class AuthController extends Controller
     /* return response()->json([
         'status' => 'success',
         'message' => 'Berhasil Login',
-        'data' => $user,
+        'data' => data yang di kirim,
     ]); */
 
     public function Login(LoginRequest $request)
@@ -52,7 +52,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $user = User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => \Hash::make($request->password),

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FilmRequest;
 use App\Models\Film;
 use App\Models\FilmDetails;
+use App\Models\FilmGenre;
+use App\Models\Genre;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -17,7 +19,8 @@ class FilmController extends Controller
      */
     public function index()
     {
-        $films = Film::all();
+        $films = Film::with("genres", "detail","aktors")->get();
+        return response()->json($films, 200);
 
         return view('pages.film.index', compact('films'));
     }
@@ -29,7 +32,8 @@ class FilmController extends Controller
      */
     public function create()
     {
-        return view('pages.film.create');
+        $genres = Genre::all();
+        return view('pages.film.create', compact('genres'));
     }
 
     /**
@@ -41,25 +45,46 @@ class FilmController extends Controller
     public function store(FilmRequest $request)
     {
 
-        // create film
-        $film = Film::create([
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'tumbnail' => $request->tumbnail,
-            'url_trailer' => $request->url_trailer,
-            'status' => $request->status,
-        ]);
+        try {
+            // simpan gambar
+            $request->file('tumbnail')->store(
+                'assets/tumbnail',
+                'public'
+            );
 
-        // create detail films
-        FilmDetails::create([
-            'film_id' => $film->id,
-            'url_film' => $request->url_film,
-            'tahun' => Carbon::now()->format('Y'),
-            'tanggal_terbit' => $request->tanggal_terbit,
-            'harga' => $request->harga,
-        ]);
+            // create film
+            $film = Film::create([
+                'judul' => $request->judul,
+                'deskripsi' => $request->deskripsi,
+                'tumbnail' => $request->tumbnail,
+                'url_trailer' => $request->url_trailer,
+                'status' => $request->status,
+            ]);
+
+            // create detail films
+            FilmDetails::create([
+                'film_id' => $film->id,
+                'url_film' => $request->url_film,
+                'tahun' => Carbon::now()->format('Y'),
+                'tanggal_terbit' => $request->tanggal_terbit,
+                'harga' => $request->harga,
+            ]);
+
+            // simpan data relasi film genre
+            // foreach ($request->genre_id as $genre) {
+            //     $filmGenre[] = new FilmGenre([
+            //         "film_id" => $film->id,
+            //         "genre_id" => $genre
+            //     ]);
+            // }
+            // create relasi film genre
+            $film->genres()->attach($request->genre_id);
+        } catch (\Exception $err) {
+            dd($err->getMessage());
+        }
 
         return redirect()->route('film.index');
+
     }
 
     /**

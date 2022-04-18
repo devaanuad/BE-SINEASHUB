@@ -13,7 +13,18 @@ class Film extends Model
             'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
     ];
 
-    // public function filmDetail(){
-    //     return $this->hasOne();
-    // }
+    public function genres(){
+        return $this->belongsToMany(Genre::class);
+    }
+
+    public function detail()
+    {
+        return $this->hasOne(FilmDetails::class);
+    }
+
+    public function aktors()
+    {
+       return $this->hasMany(Aktor::class);
+    }
+
 }
