@@ -33,7 +33,3 @@ Route::middleware('auth:sanctum')->group(function () {
 //route untuk login dengan laravel sanctum
 Route::post('/login', [AuthController::class, 'Login']);
 Route::post('/register', [AuthController::class, 'Register']);
-
-//route for google authentication
-Route::get('/callback', [AuthController::class, "redirectToProvider"]);
-Route::get('/redirect', [AuthController::class, "handleProviderCallback"]);

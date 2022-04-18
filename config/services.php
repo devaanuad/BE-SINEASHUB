@@ -33,6 +33,6 @@ return [
     'google' => [
         'client_id' => '57274426519-jtnqc5i6876vpjotk40hvcqlh0impfbb.apps.googleusercontent.com',
         'client_secret' => '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',
-        'redirect' => 'http://localhost:8000/api/callback',
+        'redirect' => 'http://localhost:8000/auth/callback',
     ],
 ];

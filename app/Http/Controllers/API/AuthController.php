@@ -31,13 +31,13 @@ class AuthController extends Controller
                     ], 401);
         }
 
-        $token = $user->createAuthToken('LoginToken',5)->plainTextToken;
+        $token = $user->createAuthToken('LoginToken', 1440)->plainTextToken;
 
         return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil Login',
                 'data' => $user,
-                'token' => $token
+                'tokenLogin' => $token
             ]);
     }
     public function Register(LoginRequest $request)
@@ -73,6 +73,7 @@ class AuthController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
+            // dd($user);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Gagal Login',
@@ -84,30 +85,30 @@ class AuthController extends Controller
         $existingUser = User::where('email', $user->email)->first();
         if ($existingUser) {
             // log them in
+            $token = $existingUser->createAuthToken('LoginToken', 1440)->plainTextToken;
             auth()->login($existingUser, true);
         } else {
             // create a new user
             $newUser                  = new User;
             $newUser->name            = $user->name;
             $newUser->email           = $user->email;
-            $newUser->google_id       = $user->google_id;
+            $newUser->google_id       = $user->id;
             $newUser->save();
             auth()->login($newUser, true);
         }
-
-        $token = $user->createAuthToken('LoginToken',5)->plainTextToken;
 
         return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil Login',
                 'data' => $user,
-                'token' => $token
+                'tokenLogin' => $token
             ]);
     }
 
-    public function refreshToken(){
-        $user = User::where('id',\Auth::id())->first();
-        $token = $user->createAuthToken('refToken',5)->plainTextToken;
+    public function refreshToken()
+    {
+        $user = User::where('id', \Auth::id())->first();
+        $token = $user->createAuthToken('refToken', 1440)->plainTextToken;
         return response()->json(['status' => 'ok', 'token' => $token]);
     }
 
