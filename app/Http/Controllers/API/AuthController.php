@@ -121,4 +121,20 @@ class AuthController extends Controller
             'message' => 'Berhasil Logout',
         ]);
     }
+
+    public function update(Request $request)
+    {
+        $user = User::where('id', \Auth::id())->first();
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Hash::make($request->password),
+            'no_hp' => $request->no_hp,
+        ]);
+        // $user->update($request->all());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil Update',
+        ]);
+    }
 }
