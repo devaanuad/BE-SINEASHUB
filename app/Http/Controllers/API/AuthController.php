@@ -109,7 +109,7 @@ class AuthController extends Controller
     {
         $user = User::where('id', \Auth::id())->first();
         $token = $user->createAuthToken('refToken', 1440)->plainTextToken;
-        return response()->json(['status' => 'ok', 'token' => $token]);
+        return response()->json(['status' => 'success', 'token' => $token]);
     }
 
     public function Logout()
