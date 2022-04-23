@@ -16,8 +16,26 @@ class FilmController extends Controller
      */
     public function index()
     {
-        $films = Film::all();
-        return response()->json(['film' => $films]);
+       try {
+            $films = Film::with('genres', 'detail', 'aktors')->get();
+            if (empty($films)) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'list film',
+                    "data" => []
+                ]);
+            }
+       } catch (\Exception $err) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $err->getMessage(),
+            ],500);
+       }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'list film',
+            "data" => $films
+        ]);
     }
 
     /**

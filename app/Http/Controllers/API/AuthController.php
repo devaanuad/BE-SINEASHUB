@@ -45,10 +45,10 @@ class AuthController extends Controller
     {
         $userGoogle = Socialite::driver('google')->user();
         $findUserGoogle = User::where('google_id', $userGoogle->id)->first();
-        if ($findUserGoogle) {
-            $user = User::updateOrCreate(['google_id' => $userGoogle->id], [
-                'name' => $request->name,
-                'email' => $request->email,
+         if ($findUserGoogle) {
+             $user = User::updateOrCreate(['google_id' => $userGoogle->id], [
+                 'name' => $request->name,
+                 'email' => $request->email,
                 'role' => 'user',
             ]);
         }
@@ -67,20 +67,27 @@ class AuthController extends Controller
 
     public function redirectToProvider()
     {
-        return Socialite::driver('google')->redirect();
+        $url = Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+
+        return response()->json(
+            [
+                'url' => $url
+            ],
+            200
+        );
     }
 
     public function handleProviderCallback()
     {
         try {
-            $user = Socialite::driver('google')->user();
+            $user = Socialite::driver('google')->stateless()->user();
             // dd($user);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Gagal Login',
                 'status' => 'Error',
                 'error_message' => $e
-            ]);
+            ],500);
         }
         // check if they're an existing user
         $existingUser = User::where('email', $user->email)->first();
@@ -108,29 +115,36 @@ class AuthController extends Controller
 
     public function Logout()
     {
-	if (method_exists(request()->user()->currentAccessToken(), 'delete')){
-	    request()->user()->currentAccessToken()->delete();
-	}
-	$token_id = \Str::before(request()->bearerToken(),'|');
-	$token = \Auth::user()->tokens()->where('id',$token_id)->delete();
-	$logout = auth()->guard('web')->logout();
+        if (method_exists(request()->user()->currentAccessToken(), 'delete')){
+            request()->user()->currentAccessToken()->delete();
+        }
+        $token_id = \Str::before(request()->bearerToken(),'|');
+        $token = \Auth::user()->tokens()->where('id',$token_id)->delete();
+        $logout = auth()->guard('web')->logout();
         return response()->json([
             'status' => 'success',
             'message' => 'Berhasil Logout',
-	    'token_id' => $token_id,
-	    'status_hapus' => $token,'logout' => $logout
+            'token_id' => $token_id,
+            'status_hapus' => $token,'logout' => $logout
         ]);
     }
 
     public function update(Request $request)
     {
-        $user = User::where('id', \Auth::id())->first();
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => \Hash::make($request->password),
-            'no_hp' => $request->no_hp,
-        ]);
+        try {
+            $user = $request->user();
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => \Hash::make($request->password),
+                'no_hp' => $request->no_hp,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'data tidak lengkap',
+            ],400);
+        }
         // $user->update($request->all());
         return response()->json([
             'status' => 'success',
