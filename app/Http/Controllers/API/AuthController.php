@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -26,43 +28,113 @@ class AuthController extends Controller
 
         if (!$user || !\Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
+                        'message' => 'Unauthorized'
+                    ], 401);
         }
 
-        $token = $user->createToken('LoginToken')->plainTextToken;
+        $token = $user->createToken('LoginToken',['auth'])->plainTextToken;
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Berhasil Login',
-            'data' => $user,
-            'token' => $token
-        ]);
+                'status' => 'success',
+                'message' => 'Berhasil Login',
+                'data' => $user,
+                'tokenLogin' => $token
+            ]);
     }
-
-    public function register(LoginRequest $request)
+    public function Register(Request $request)
     {
+        $userGoogle = Socialite::driver('google')->user();
+        $findUserGoogle = User::where('google_id', $userGoogle->id)->first();
+        if ($findUserGoogle) {
+            $user = User::updateOrCreate(['google_id' => $userGoogle->id], [
+                'name' => $request->name,
+                'email' => $request->email,
+                'role' => 'user',
+            ]);
+        }
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => \Hash::make($request->password),
             'role' => 'user',
-            'google_id' => null
         ]);
-
         return response()->json([
             'status' => 'success',
             'message' => 'Berhasil Register',
         ]);
     }
 
-    public function logout()
+    public function redirectToProvider()
     {
-        request()->user()->currentAccessToken()->delete();
+        return Socialite::driver('google')->redirect();
+    }
 
+    public function handleProviderCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->user();
+            // dd($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal Login',
+                'status' => 'Error',
+                'error_message' => $e
+            ]);
+        }
+        // check if they're an existing user
+        $existingUser = User::where('email', $user->email)->first();
+        if ($existingUser) {
+            // log them in
+            $token = $existingUser->createToken('LoginToken',['auth'])->plainTextToken;
+            auth()->login($existingUser, true);
+        } else {
+            // create a new user
+            $newUser                  = new User;
+            $newUser->name            = $user->name;
+            $newUser->email           = $user->email;
+            $newUser->google_id       = $user->id;
+            $newUser->save();
+            auth()->login($newUser, true);
+        }
+
+        return response()->json([
+                'status' => 'success',
+                'message' => 'Berhasil Login',
+                'data' => $user,
+                'tokenLogin' => $token
+            ]);
+    }
+
+    public function Logout()
+    {
+	if (method_exists(request()->user()->currentAccessToken(), 'delete')){
+	    request()->user()->currentAccessToken()->delete();
+	}
+	$token_id = \Str::before(request()->bearerToken(),'|');
+	$token = \Auth::user()->tokens()->where('id',$token_id)->delete();
+	$logout = auth()->guard('web')->logout();
         return response()->json([
             'status' => 'success',
             'message' => 'Berhasil Logout',
+	    'token_id' => $token_id,
+	    'status_hapus' => $token,'logout' => $logout
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $user = User::where('id', \Auth::id())->first();
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Hash::make($request->password),
+            'no_hp' => $request->no_hp,
+        ]);
+        // $user->update($request->all());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil Update',
         ]);
     }
 }
