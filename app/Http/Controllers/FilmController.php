@@ -19,8 +19,7 @@ class FilmController extends Controller
      */
     public function index()
     {
-        $films = Film::with("genres", "detail","aktors")->get();
-        return response()->json($films, 200);
+        $films = Film::cursorPaginate(10);
 
         return view('pages.film.index', compact('films'));
     }
@@ -47,7 +46,7 @@ class FilmController extends Controller
 
         try {
             // simpan gambar
-            $request->file('tumbnail')->store(
+            $tumbnail = $request->file('tumbnail')->store(
                 'assets/tumbnail',
                 'public'
             );
@@ -56,9 +55,9 @@ class FilmController extends Controller
             $film = Film::create([
                 'judul' => $request->judul,
                 'deskripsi' => $request->deskripsi,
-                'tumbnail' => $request->tumbnail,
+                'tumbnail' => $tumbnail,
                 'url_trailer' => $request->url_trailer,
-                'status' => $request->status,
+                'status' => $request->status
             ]);
 
             // create detail films
@@ -68,6 +67,7 @@ class FilmController extends Controller
                 'tahun' => Carbon::now()->format('Y'),
                 'tanggal_terbit' => $request->tanggal_terbit,
                 'harga' => $request->harga,
+                'sutradara' => $request->sutradara
             ]);
 
             // simpan data relasi film genre
@@ -107,8 +107,9 @@ class FilmController extends Controller
      */
     public function edit($id)
     {
-        $film = Film::findOrFail($id);
-        return view('pages.film.edit', compact('film'));
+        $genres = Genre::all();
+        $film = Film::with('detail', 'genres')->findOrFail($id);
+        return view('pages.film.edit', compact('film', 'genres'));
     }
 
     /**

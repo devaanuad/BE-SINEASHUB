@@ -32,7 +32,7 @@
                     <tbody>
                         @forelse ($genres as $genre)
                             <tr>
-                                <td>{{ $genre->id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $genre->name }}</td>
                                 <td class="d-flex justify-content-center">
                                     <a href="{{ route('genre.edit', $genre->id) }}" class="btn btn-info">
