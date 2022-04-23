@@ -27,9 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/film/detail/{id}', [FilmController::class, 'showDetail']);
     Route::post('/transaction', [TransactionController::class, 'store']);
     Route::post('/logout', [AuthController::class, 'Logout']);
-    Route::get('/refresh', [AuthController::class, 'refreshToken']);
     Route::post('/user/update', [AuthController::class, 'update']);
     Route::post('/transaction/midtrans', [TransactionController::class,'midtrans']);
+
 });
 
 //route untuk login dengan laravel sanctum

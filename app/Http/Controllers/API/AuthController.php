@@ -7,6 +7,7 @@ use App\Http\Requests\API\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -31,7 +32,7 @@ class AuthController extends Controller
                     ], 401);
         }
 
-        $token = $user->createAuthToken('LoginToken', 1440)->plainTextToken;
+        $token = $user->createToken('LoginToken',['auth'])->plainTextToken;
 
         return response()->json([
                 'status' => 'success',
@@ -40,7 +41,7 @@ class AuthController extends Controller
                 'tokenLogin' => $token
             ]);
     }
-    public function Register(LoginRequest $request)
+    public function Register(Request $request)
     {
         $userGoogle = Socialite::driver('google')->user();
         $findUserGoogle = User::where('google_id', $userGoogle->id)->first();
@@ -85,7 +86,7 @@ class AuthController extends Controller
         $existingUser = User::where('email', $user->email)->first();
         if ($existingUser) {
             // log them in
-            $token = $existingUser->createAuthToken('LoginToken', 1440)->plainTextToken;
+            $token = $existingUser->createToken('LoginToken',['auth'])->plainTextToken;
             auth()->login($existingUser, true);
         } else {
             // create a new user
@@ -105,20 +106,19 @@ class AuthController extends Controller
             ]);
     }
 
-    public function refreshToken()
-    {
-        $user = User::where('id', \Auth::id())->first();
-        $token = $user->createAuthToken('refToken', 1440)->plainTextToken;
-        return response()->json(['status' => 'success', 'token' => $token]);
-    }
-
     public function Logout()
     {
-        request()->user()->currentAccessToken()->delete();
-
+	if (method_exists(request()->user()->currentAccessToken(), 'delete')){
+	    request()->user()->currentAccessToken()->delete();
+	}
+	$token_id = \Str::before(request()->bearerToken(),'|');
+	$token = \Auth::user()->tokens()->where('id',$token_id)->delete();
+	$logout = auth()->guard('web')->logout();
         return response()->json([
             'status' => 'success',
             'message' => 'Berhasil Logout',
+	    'token_id' => $token_id,
+	    'status_hapus' => $token,'logout' => $logout
         ]);
     }
 

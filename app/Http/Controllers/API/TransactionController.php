@@ -52,7 +52,7 @@ class TransactionController extends Controller
                 ),
                 'transaction_details' => array(
                     'order_id' => rand(),
-                    'gross_amount' => 10000,
+                    'gross_amount' => $request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
                     'transaction_id' => $transaction->id,
                     'nama_film' => $request->nama_film,
                     'harga_beli' => $request->harga_beli,
@@ -62,7 +62,7 @@ class TransactionController extends Controller
                 'user_details' => array(
                     'name' => $user->name,
                     'email' => $user->email,
-                    'phone' => $user->no_hp ? $user->no_hp : '',
+                    'phone' => $user->no_hp ? $user->no_hp : '-',
                 ),
             );
             

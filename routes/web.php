@@ -28,6 +28,6 @@ Route::resource('/admin/aktor', AktorController::class);
 //maaf bang asep buat route google auth di sini soalnya butuh session buat redirect ke url google sedangkan di api.php gak diset session nya sama laravel
 Route::get('auth/redirect', [AuthController::class, "redirectToProvider"]);
 Route::get('auth/callback', [AuthController::class, "handleProviderCallback"]);
-
+//Route::post('/logout', [AuthController::class, 'Logout'])->middleware('auth:sanctum');
 
 require __DIR__.'/auth.php';
