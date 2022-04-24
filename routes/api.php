@@ -1,5 +1,5 @@
 <?php
-
+//header('Access-Control-Allow-Origin: *');
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +29,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'Logout']);
     Route::post('/user/update', [AuthController::class, 'update']);
     Route::post('/transaction/midtrans', [TransactionController::class,'midtrans']);
-
 });
 
 //route untuk login dengan laravel sanctum

@@ -24,7 +24,7 @@ class Film extends Model
 
     public function aktors()
     {
-       return $this->hasMany(Aktor::class);
+        return $this->hasMany(Aktor::class);
     }
 
 }

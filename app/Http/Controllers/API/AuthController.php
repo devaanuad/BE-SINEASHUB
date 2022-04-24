@@ -4,10 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\LoginRequest;
+use App\Http\Requests\API\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -27,12 +27,10 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !\Hash::check($request->password, $user->password)) {
-            return response()->json([
-                        'message' => 'Unauthorized'
-                    ], 401);
+            return response()->json(['message' => 'Akun tidak terdaftar','status' => 'error'], 401);
         }
 
-        $token = $user->createToken('LoginToken',['auth'])->plainTextToken;
+        $token = $user->createToken('LoginToken', ['auth'])->plainTextToken;
 
         return response()->json([
                 'status' => 'success',
@@ -41,33 +39,38 @@ class AuthController extends Controller
                 'tokenLogin' => $token
             ]);
     }
-    public function Register(Request $request)
+    public function Register(RegisterRequest $request)
     {
-        $userGoogle = Socialite::driver('google')->user();
-        $findUserGoogle = User::where('google_id', $userGoogle->id)->first();
-        if ($findUserGoogle) {
-            $user = User::updateOrCreate(['google_id' => $userGoogle->id], [
+        try {
+            User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'no_hp' => $request->no_hp,
+                'password' => \Hash::make($request->password),
                 'role' => 'user',
             ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Berhasil Register',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'terjadi kesalahan saat memasukan data diri anda'//$e->getMessage()
+            ], 500);
         }
-
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => \Hash::make($request->password),
-            'role' => 'user',
-        ]);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Berhasil Register',
-        ]);
     }
 
     public function redirectToProvider()
     {
-        return Socialite::driver('google')->redirect();
+        try {
+            return Socialite::driver('google')->redirect();
+        } catch (\Exception $e) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'tidak dapat menghubungkan ke google'//$e->getMessage()
+            ], 500);
+        }
     }
 
     public function handleProviderCallback()
@@ -77,16 +80,15 @@ class AuthController extends Controller
             // dd($user);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Gagal Login',
                 'status' => 'Error',
-                'error_message' => $e
-            ]);
+                'message' => 'tidak dapat mendapatkan data user'//$e->getMessage()
+            ], 500);
         }
         // check if they're an existing user
         $existingUser = User::where('email', $user->email)->first();
         if ($existingUser) {
             // log them in
-            $token = $existingUser->createToken('LoginToken',['auth'])->plainTextToken;
+            $token = $existingUser->createToken('LoginToken', ['auth'])->plainTextToken;
             auth()->login($existingUser, true);
         } else {
             // create a new user
@@ -108,33 +110,39 @@ class AuthController extends Controller
 
     public function Logout()
     {
-	if (method_exists(request()->user()->currentAccessToken(), 'delete')){
-	    request()->user()->currentAccessToken()->delete();
-	}
-	$token_id = \Str::before(request()->bearerToken(),'|');
-	$token = \Auth::user()->tokens()->where('id',$token_id)->delete();
-	$logout = auth()->guard('web')->logout();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Berhasil Logout',
-	    'token_id' => $token_id,
-	    'status_hapus' => $token,'logout' => $logout
-        ]);
+        try{
+            request()->user()->currentAccessToken()->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Berhasil Logout',
+            ]);
+        } catch(\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'gagal logout'//$e->getMessage()
+            ], 500);
+        }
     }
 
     public function update(Request $request)
     {
-        $user = User::where('id', \Auth::id())->first();
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => \Hash::make($request->password),
-            'no_hp' => $request->no_hp,
-        ]);
-        // $user->update($request->all());
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Berhasil Update',
-        ]);
+        try {
+            $user = request()->user();
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => \Hash::make($request->password),
+                'no_hp' => $request->no_hp,
+            ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Berhasil Update',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'terjadi kesalahan saat mengubah akun anda'//$e->getMessage()
+            ], 500);
+        }
     }
 }
