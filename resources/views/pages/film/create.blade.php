@@ -58,11 +58,13 @@
                         <label for="url_film">Url Film</label>
                         <input type="text" name="url_film" id="url_film" placeholder="Masukkan url film" value="{{ old('url_film') }}" class="form-control">
                     </div>
-                    {{-- <div class="form-group col-lg-5 col-xl-5 d-inline-block">
-                        <label for="tahun">Tahun</label>
-                        <input type="date" name="tahun" id="tahun" value="{{ old('tahun') }}" class="form-control">
-                    </div> --}}
-                    <div class="form-group">
+
+                    <div class="form-group col-lg-6 col-xl-6 d-inline-block">
+                        <label for="sutradara">Sutradara</label>
+                        <input type="text" name="sutradara" id="sutradara" value="{{ old('sutradara') }}" class="form-control">
+                    </div>
+
+                    <div class="form-group col-lg-5 col-xl-5 d-inline-block">
                         <label for="tanggal_terbit">Tanggal Terbit</label>
                         <input type="date" name="tanggal_terbit" id="tanggal_terbit" value="{{ old('tanggal_terbit') }}" class="form-control">
                     </div>
@@ -76,7 +78,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" name="genre_id[]" type="checkbox" value="{{$genre->id}}" id="flexCheck{{$genre->name}}">
                                 <label class="form-check-label" for="flexCheck{{$genre->name}}">
-                                    {{$genre->name}} checkbox
+                                    {{$genre->name}}
                                 </label>
                             </div>
                         @endforeach

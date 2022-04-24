@@ -16,6 +16,7 @@ class FilmDetails extends Model
         'tahun',
         'tanggal_terbit',
         'harga',
-        'kunjungan'
+        'kunjungan',
+        'sutradara'
     ];
 }

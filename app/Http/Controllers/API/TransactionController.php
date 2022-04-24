@@ -74,7 +74,7 @@ class TransactionController extends Controller
                     'phone' => $user->no_hp ? $user->no_hp : '-',
                 ),
             );
-            
+
             $snapToken = \Midtrans\Snap::getSnapToken($params);
             return response()->json([
                 'transaction_token' => $snapToken,

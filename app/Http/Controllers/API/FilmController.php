@@ -17,19 +17,26 @@ class FilmController extends Controller
     public function index()
     {
         try {
-            $films = Film::with('detail', 'aktors', 'genres')->get();
-            return response()->json([
-                'list_film' => $films,
-                'status' => 'success',
-            ]);
-        } catch (\Exception $e) {
+            $films = Film::with('genres', 'detail', 'aktors')->get();
+            if (empty($films)) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'list film',
+                    "data" => []
+                ]);
+            }
+        } catch (\Exception $err) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'terjadi kesalahan saat mendapatkan daftar film'//$e->getMessage()
+                'message' => $err->getMessage(),
             ], 500);
         }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'list film',
+            "data" => $films
+        ]);
     }
-
     /**
      * Display the specified resource.
      *
@@ -39,7 +46,7 @@ class FilmController extends Controller
     public function showDetail($id)
     {
         try {
-            $films = Film::with('detail')->where('id',$id)->get();
+            $films = Film::with('detail')->where('id', $id)->get();
             return response()->json([
                 'detail_film' => $films,
                 'status' => 'success'

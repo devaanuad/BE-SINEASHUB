@@ -36,10 +36,10 @@
                     <tbody>
                         @forelse ($films as $film)
                             <tr>
-                                <td>{{ $film->id }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $film->judul }}</td>
                                 <td>{{ $film->deskripsi }}</td>
-                                <td>{{ $film->tumbnail }}</td>
+                                <td> <img src="{{ Storage::url($film->tumbnail) }}" alt="tumbnail" style="width: 150px" class="img-thumbnail"> </td>
                                 <td>{{ $film->url_trailer }}</td>
                                 <td class="{{ $film->status == 'coming soon' ? 'text-warning' : 'text-primary' }}">{{ $film->status }}</td>
                                 <td class="d-flex justify-content-center">
@@ -70,6 +70,8 @@
                 </table>
             </div>
         </div>
+
+        {{ $films->links() }}
     </div>
     <!-- /.container-fluid -->
 @endsection

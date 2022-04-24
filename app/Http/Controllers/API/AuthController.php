@@ -56,32 +56,27 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'terjadi kesalahan saat memasukan data diri anda'//$e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
 
     public function redirectToProvider()
     {
-        try {
-            return Socialite::driver('google')->redirect();
-        } catch (\Exception $e) {
-            return \response()->json([
-                'status' => 'error',
-                'message' => 'tidak dapat menghubungkan ke google'//$e->getMessage()
-            ], 500);
-        }
+        $url = Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+
+        return response()->json(['url' => $url], 200);
     }
 
     public function handleProviderCallback()
     {
         try {
-            $user = Socialite::driver('google')->user();
+            $user = Socialite::driver('google')->stateless()->user();
             // dd($user);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'Error',
-                'message' => 'tidak dapat mendapatkan data user'//$e->getMessage()
+                'error_message' => $e->getMessage()//'tidak dapat mendapatkan data user'
             ], 500);
         }
         // check if they're an existing user
@@ -119,7 +114,7 @@ class AuthController extends Controller
         } catch(\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'gagal logout'//$e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -127,22 +122,23 @@ class AuthController extends Controller
     public function update(Request $request)
     {
         try {
-            $user = request()->user();
+            $user = $request->user();
             $user->update([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => \Hash::make($request->password),
                 'no_hp' => $request->no_hp,
             ]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Berhasil Update',
-            ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $th) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'terjadi kesalahan saat mengubah akun anda'//$e->getMessage()
-            ], 500);
+                'message' => 'data tidak lengkap',
+            ],400);
         }
+        // $user->update($request->all());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil Update',
+        ]);
     }
 }
