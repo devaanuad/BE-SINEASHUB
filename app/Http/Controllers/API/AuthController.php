@@ -92,6 +92,7 @@ class AuthController extends Controller
             $newUser->email           = $user->email;
             $newUser->google_id       = $user->id;
             $newUser->save();
+	    $token = $existingUser->createToken('LoginToken', ['auth'])->plainTextToken;
             auth()->login($newUser, true);
         }
 

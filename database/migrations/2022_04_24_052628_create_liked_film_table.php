@@ -13,8 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('film_details', function (Blueprint $table) {
-            $table->string('sutradara');
+        Schema::create('liked_film', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('film_details', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('liked_film');
     }
 };
