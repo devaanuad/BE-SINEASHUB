@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('otp', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
