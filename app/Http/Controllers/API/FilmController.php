@@ -16,13 +16,16 @@ class FilmController extends Controller
      */
     public function index()
     {
+        // cache()->forget('all-film-data');
         try {
-            $films = Film::with('genres', 'detail', 'aktors')->get();
+            $films = cache()->remember('all-film-data', 60*60*24, function () {
+                return Film::with('film_genres', 'detail', 'aktors', 'creator')->get();
+            });
             if (empty($films)) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'list film',
-                    "data" => []
+                    "data" => $films
                 ]);
             }
         } catch (\Exception $err) {
@@ -46,7 +49,9 @@ class FilmController extends Controller
     public function showDetail($id)
     {
         try {
-            $films = Film::with('detail')->where('id', $id)->get();
+            $films = cache()->remember("detail-film-$id", 60*60*24, function () {
+                return Film::with('film_genres', 'detail', 'aktors', 'creator')->where('id', $id)->get();
+            });
             return response()->json([
                 'detail_film' => $films,
                 'status' => 'success'

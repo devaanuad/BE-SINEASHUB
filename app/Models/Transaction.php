@@ -9,4 +9,8 @@ class Transaction extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'film_id'];
+
+    public function detail() {
+        return $this->hasOne(DetailTransaction::class);
+    }
 }

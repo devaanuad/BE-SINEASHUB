@@ -92,7 +92,7 @@ class AuthController extends Controller
             $newUser->email           = $user->email;
             $newUser->google_id       = $user->id;
             $newUser->save();
-	    $token = $existingUser->createToken('LoginToken', ['auth'])->plainTextToken;
+	        $token = $existingUser->createToken('LoginToken', ['auth'])->plainTextToken;
             auth()->login($newUser, true);
         }
 
@@ -141,5 +141,22 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Berhasil Update',
         ]);
+    }
+    public function change_password() {
+        try {
+            $user = $request->user();
+            $user->update([
+                'password' => \Hash::make($request->password),
+            ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Berhasil Update',
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'terjadi kesalahan saat merubah password',
+            ],500);
+        }
     }
 }

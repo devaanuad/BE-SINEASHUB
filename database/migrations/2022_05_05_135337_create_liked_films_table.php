@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('liked_film', function (Blueprint $table) {
+        Schema::create('liked_films', function (Blueprint $table) {
             $table->id();
             $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('liked_film');
+        Schema::dropIfExists('liked_films');
     }
 };

@@ -9,4 +9,9 @@ class DetailTransaction extends Model
 {
     use HasFactory;
     protected $fillable = ['transaction_id', 'nama_film', 'harga_beli', 'tanggal_beli', 'tanggal_berakhir', 'status'];
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

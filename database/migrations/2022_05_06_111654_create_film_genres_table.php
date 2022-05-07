@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('otp', function (Blueprint $table) {
+        Schema::create('film_genres', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
+            $table->foreignId('genre_id')->references('id')->on('genres')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('otp');
+        Schema::dropIfExists('film_genres');
     }
 };

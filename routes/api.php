@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FilmController;
 use App\Http\Controllers\API\TransactionController;
+use App\Http\Controllers\API\UtilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'Logout']);
     Route::post('/user/update', [AuthController::class, 'update']);
     Route::post('/transaction/midtrans', [TransactionController::class,'midtrans']);
+    Route::get('/rekomendasi', [UtilityController::class,'rekomendasi']);
+    Route::get('/trending', [UtilityController::class,'trending']);
+    Route::get('/terfavorit', [UtilityController::class,'terfavorit']);
+    Route::post('/like_dislike', [UtilityController::class,'like_dislike']);
+    Route::get('/get_liked_film', [UtilityController::class,'get_liked_film']);
 });
 
 //route untuk login dengan laravel sanctum

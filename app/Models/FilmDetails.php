@@ -19,4 +19,8 @@ class FilmDetails extends Model
         'kunjungan',
         'sutradara'
     ];
+
+    public function film() {
+        return $this->belongsTo(Film::class);
+    }
 }
