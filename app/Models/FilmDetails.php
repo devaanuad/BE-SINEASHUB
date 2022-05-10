@@ -17,7 +17,11 @@ class FilmDetails extends Model
         'tanggal_terbit',
         'harga',
         'kunjungan',
-        'sutradara'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
     public function film() {

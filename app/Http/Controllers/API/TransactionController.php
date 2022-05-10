@@ -48,7 +48,7 @@ class TransactionController extends Controller
     public function midtrans(Request $request)
     {
         try {
-            \Midtrans\Config::$serverKey = 'YOUR_SERVER_KEY';
+            \Midtrans\Config::$serverKey = 'SB-Mid-server-0PLmsmjandYEXvNR8-54jM_T';
             \Midtrans\Config::$isProduction = false;
             \Midtrans\Config::$isSanitized = true;
             \Midtrans\Config::$is3ds = true;
@@ -56,15 +56,15 @@ class TransactionController extends Controller
             $user = User::where('id', \Auth::id())->first();
             $params = array(
                 'transaction' => array(
-                    'film_id' => $request->film_id,
-                    'user_id' => \Auth::id()
+                    'film_id' => 1,//$request->film_id,
+                    'user_id' => request()->user()->id
                 ),
                 'transaction_details' => array(
                     'order_id' => rand(),
-                    'gross_amount' =>   $request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
-                    'transaction_id' =>   $transaction->id,
-                    'nama_film' =>   $request->nama_film,
-                    'harga_beli' =>   $request->harga_beli,
+                    'gross_amount' =>   61000,//$request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
+                    'transaction_id' =>   90,//$transaction->id,
+                    'nama_film' =>   'bla',//$request->nama_film,
+                    'harga_beli' =>   56000,//$request->harga_beli,
                     'tanggal_beli' => Carbon::now()->format('Y-m-d'),
                     'tanggal_berakhir' => Carbon::now()->addHours($request->film_expire)->format('Y-m-d'),
                 ),
@@ -83,7 +83,7 @@ class TransactionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'terjadi kesalahan'//$e->getMessage()
+                'message' => $e->getMessage()
             ],500);
         }
     }

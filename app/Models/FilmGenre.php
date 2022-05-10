@@ -13,4 +13,15 @@ class FilmGenre extends Model
     public function film(){
         return $this->belongsTo(Film::class);
     }
+
+    protected $hidden = [
+        'id',
+        'film_id',
+        'created_at',
+        'updated_at',
+    ];
+
+    public function genres() {
+        return $this->hasMany(Genre::class,'id','genre_id');
+    }
 }

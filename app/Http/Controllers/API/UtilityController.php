@@ -87,7 +87,7 @@ class UtilityController extends Controller
             $data_genre = [];
             $filtered_film = [];
 
-            $trans = Transaction::with('detail')->where('user_id', \Auth::id())->get();
+            $trans = Transaction::with('detail:film_id')->where('user_id', \Auth::id())->get();
             foreach ($trans as $data) {
                 $genre = FilmGenre::where('film_id', $data->film_id)->get();
                 foreach($genre as $j){

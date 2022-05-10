@@ -2,11 +2,11 @@
 //header('Access-Control-Allow-Origin: *');
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FilmController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UtilityController;
+use App\Http\Controllers\API\OtpController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/terfavorit', [UtilityController::class,'terfavorit']);
     Route::post('/like_dislike', [UtilityController::class,'like_dislike']);
     Route::get('/get_liked_film', [UtilityController::class,'get_liked_film']);
+    Route::post('/sendOtp', [OtpController::class, 'sendOtp']);
+    Route::get('/cari/{judul}', [FilmController::class, 'cari']);
 });
 
 //route untuk login dengan laravel sanctum

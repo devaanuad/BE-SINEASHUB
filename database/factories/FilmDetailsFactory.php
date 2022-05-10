@@ -19,7 +19,7 @@ class FilmDetailsFactory extends Factory
         return [
             'film_id' => $this->faker->numberBetween(1,\App\Models\Film::count()),
             'url_film' => $this->faker->url(),
-            'rating' => mt_rand(1,5) * rand(0.1,1),
+            'rating' => mt_rand (10, 50) / 10,
             'tahun' => mt_rand(2000,2022),
             'tanggal_terbit' => '2022-01-01',
             'harga' => mt_rand(10000,10000000),

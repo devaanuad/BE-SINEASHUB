@@ -13,6 +13,11 @@ class Film extends Model
             'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function genres(){
         return $this->belongsToMany(Genre::class);
     }
