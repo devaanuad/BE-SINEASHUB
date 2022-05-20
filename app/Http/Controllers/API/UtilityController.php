@@ -52,7 +52,10 @@ class UtilityController extends Controller
     public function trending(Request $req)
     {
         try {
-            $trending_film = FilmDetails::with('film')->orderBy('kunjungan', 'desc')->get();
+            $trending_film = cache()->remember('trending',60*60*24,function (){
+                return FilmDetails::with('film:id,tumbnail,judul')
+                    ->select('film_id','rating','kunjungan')->orderBy('kunjungan', 'desc')->get();
+            });
             return response()->json([
                 'status' => 'success',
                 'data' => $trending_film
@@ -68,7 +71,14 @@ class UtilityController extends Controller
     public function terfavorit(Request $req)
     {
         try {
-            $film_favorit = LikedFilm::selectRaw('film_id, count(film_id) as jumlah')->groupBy('film_id')->orderBy('jumlah','desc')->get();
+            $film_favorit = cache()->remember('terfavorit',60*60*24,function(){
+                return LikedFilm::join('films','films.id','=','liked_films.film_id')
+                    ->selectRaw('films.id,films.judul,films.tumbnail, count(*) as jumlah')
+                    ->groupBy('films.id')
+                    ->orderBy('jumlah','desc')
+                    ->limit(100)
+                    ->get();
+            });
             return response()->json([
                 'status' => 'success',
                 'data' => $film_favorit
@@ -81,7 +91,7 @@ class UtilityController extends Controller
         }
     }
 
-    public function rekomendasi()
+    public function terkait()
     {
         try {
             $data_genre = [];
@@ -89,15 +99,22 @@ class UtilityController extends Controller
 
             $trans = Transaction::with('detail:film_id')->where('user_id', \Auth::id())->get();
             foreach ($trans as $data) {
+                // dd($data->film_id);
                 $genre = FilmGenre::where('film_id', $data->film_id)->get();
                 foreach($genre as $j){
                     array_push($data_genre, $j->genre_id);
                 }
             }
-            foreach (array_unique($data_genre) as $data) {
-                $film = Film::distinct()->join('film_genres','films.id','=','film_genres.film_id')->where('film_genres.genre_id',$data)->selectRaw('films.*,film_genres.genre_id')->get();
-                array_push($filtered_film, $film);
-            }
+            $film = cache()->remember('terkait',60*60*24,function () {
+                return Film::distinct()
+                    ->join('film_genres','films.id','=','film_genres.film_id')
+                    ->whereIntegerInRaw('film_genres.genre_id',array_unique($data_genre))
+                    ->selectRaw('films.id,films.judul,films.tumbnail,film_genres.genre_id')
+                    ->groupBy('film_genres.genre_id')
+                    ->get();
+            });
+
+            array_push($filtered_film, $film);
 
             return response()->json([
                 'status' => 'success',
@@ -113,7 +130,11 @@ class UtilityController extends Controller
 
     public function get_liked_film(){
         try {
-            $liked_film = LikedFilm::join('films','films.id','=','liked_films.film_id')->where('liked_films.user_id',\Auth::id())->selectRaw('films.*')->get();
+            $liked_film = cache()->remember('liked-film',60*60*24,function (){
+                return LikedFilm::join('films','films.id','=','liked_films.film_id')
+                    ->where('liked_films.user_id',\Auth::id())->selectRaw('films.id,films.judul,films.tumbnail')
+                    ->get();
+            });
             return response()->json([
                 'status' => 'success',
                 'data' => $liked_film
@@ -122,7 +143,7 @@ class UtilityController extends Controller
             return response()->json([
                 'status' => 'error',
                 'data' => $e->getMessage()
-            ]);
+            ],500);
         }
     }
 }

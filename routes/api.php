@@ -27,18 +27,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/film', [FilmController::class, 'index']);
     Route::get('/film/detail/{id}', [FilmController::class, 'showDetail']);
     Route::post('/transaction', [TransactionController::class, 'store']);
+    Route::get('/getUserTransaction', [TransactionController::class, 'get_user_transaction']);
     Route::post('/logout', [AuthController::class, 'Logout']);
     Route::post('/user/update', [AuthController::class, 'update']);
     Route::post('/transaction/midtrans', [TransactionController::class,'midtrans']);
-    Route::get('/rekomendasi', [UtilityController::class,'rekomendasi']);
     Route::get('/trending', [UtilityController::class,'trending']);
     Route::get('/terfavorit', [UtilityController::class,'terfavorit']);
     Route::post('/like_dislike', [UtilityController::class,'like_dislike']);
     Route::get('/get_liked_film', [UtilityController::class,'get_liked_film']);
     Route::post('/sendOtp', [OtpController::class, 'sendOtp']);
     Route::get('/cari/{judul}', [FilmController::class, 'cari']);
+    Route::get('/terkait', [UtilityController::class,'terkait']);
 });
 
-//route untuk login dengan laravel sanctum
 Route::post('/login', [AuthController::class, 'Login']);
 Route::post('/register', [AuthController::class, 'Register']);

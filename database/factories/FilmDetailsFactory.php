@@ -16,14 +16,16 @@ class FilmDetailsFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'film_id' => $this->faker->numberBetween(1,\App\Models\Film::count()),
-            'url_film' => $this->faker->url(),
+        $filmId = range(1,\App\Models\Film::count());
+        shuffle($filmId);
+        return [[
+            'film_id' => array_unique($filmId),
+            'url_film' => $this->faker->url(true),
             'rating' => mt_rand (10, 50) / 10,
             'tahun' => mt_rand(2000,2022),
             'tanggal_terbit' => '2022-01-01',
             'harga' => mt_rand(10000,10000000),
-            'kunjungan' => mt_rand(1,10000)
-        ];
+            'kunjungan' => mt_rand(1,10000),
+        ]];
     }
 }

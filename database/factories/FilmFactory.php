@@ -17,10 +17,13 @@ class FilmFactory extends Factory
     public function definition()
     {
         $stat = ['production','on-air','coming-soon'];
+        $filmId = range(1,\App\Models\Film::count());
+        shuffle($filmId);
         return [
             'judul' => $this->faker->name(),
             'deskripsi' => $this->faker->paragraph(),
             'tumbnail' => $this->faker->sentence(1).'jpg',
+            'creator_id' => $this->faker->unique()->numberBetween(1,\App\Models\Creator::count()),
             'url_trailer' => $this->faker->url(),
             'status' => $stat[\mt_rand(0,2)]
         ];

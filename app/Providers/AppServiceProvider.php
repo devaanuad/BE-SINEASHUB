@@ -23,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \App\Models\Film::observe(\App\Observers\FilmObserver::class);
+        \App\Models\LikedFilm::observe(\App\Observers\LikedFilmObserver::class);
+        \App\Models\Transaction::observe(\App\Observers\TransactionObserver::class);
     }
 }

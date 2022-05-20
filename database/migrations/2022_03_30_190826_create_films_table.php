@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('films', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('creator_id')->references('id')->on('creators')->onDelete('cascade');
             $table->string('judul');
             $table->text('tumbnail');
             $table->text('deskripsi');

@@ -17,8 +17,10 @@ class DetailTransactionFactory extends Factory
     public function definition()
     {
         $stat = ['pending','success','cancel'];
+        $tranId = range(1,\App\Models\Transaction::count());
+        shuffle($tranId);
         return [
-            'transaction_id' => $this->faker->unique(false,1000000)->numberBetween(1,\App\Models\Transaction::count()),
+            'transaction_id' => array_unique($tranId),
             'film_id' => $this->faker->numberBetween(1,\App\Models\Film::count()),
             'total_harga' => mt_rand(10000,10000000),
             'nama_film' => $this->faker->unique()->name(\App\Models\Film::pluck('judul')),

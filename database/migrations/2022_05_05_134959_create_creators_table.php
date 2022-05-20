@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('creators', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
             $table->string('sutradara');
             $table->string('penulis');
             $table->string('perusahaan_produksi');

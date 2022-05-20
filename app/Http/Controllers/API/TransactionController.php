@@ -53,7 +53,7 @@ class TransactionController extends Controller
             \Midtrans\Config::$isSanitized = true;
             \Midtrans\Config::$is3ds = true;
 
-            $user = User::where('id', \Auth::id())->first();
+            $user = User::where('id', Auth::id())->first();
             $params = array(
                 'transaction' => array(
                     'film_id' => 1,//$request->film_id,
@@ -81,6 +81,21 @@ class TransactionController extends Controller
                 'redirect_url' => "https://app.sandbox.midtrans.com/snap/v2/vtweb/$snapToken"
             ]);
         } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function get_user_transaction(){
+        try {
+            $trans = Transaction::with('detail')->where('user_id',Auth::id())->get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $trans
+            ]);
+        } catch (\Exception $th) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()

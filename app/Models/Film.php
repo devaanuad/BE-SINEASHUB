@@ -34,7 +34,7 @@ class Film extends Model
 
     public function creator()
     {
-        return $this->hasOne(Creator::class);
+        return $this->belongsTo(Creator::class);
     }
 
     public function film_genres(){

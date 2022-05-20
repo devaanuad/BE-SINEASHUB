@@ -18,9 +18,9 @@ class FilmController extends Controller
     public function index()
     {
         try {
-            cache()->forget('all-film-data');
+            // cache()->forget('all-film-data');
             $films = cache()->remember('all-film-data', 60*60*24, function () {
-                return Film::with('film_genres.genres','creator', 'detail:film_id,rating,tanggal_terbit,kunjungan')->get();
+                return Film::with('detail:film_id,rating,tanggal_terbit,kunjungan')->get();
             });
 
             return response()->json([
@@ -56,7 +56,7 @@ class FilmController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'tidak dapat menemukan detail film'//$e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -65,9 +65,7 @@ class FilmController extends Controller
     {
         // cache()->clear();
         try {
-            $films = cache()->remember("detail-film-$judul", 60*60*24, function () use ($judul) {
-                return Film::with('film_genres.genres')->where('judul','like', "$judul%")->get();
-            });
+            $films = Film::with('film_genres.genres')->where('judul','like', "$judul%")->get();
             return response()->json([
                 'film' => $films,
                 'status' => 'success'
