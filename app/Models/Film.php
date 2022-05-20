@@ -10,7 +10,7 @@ class Film extends Model
     use HasFactory;
 
     protected $fillable = [
-            'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
+        'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
     ];
 
     protected $hidden = [
@@ -19,7 +19,7 @@ class Film extends Model
     ];
 
     public function genres(){
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsTo(Genre::class);
     }
 
     public function detail()

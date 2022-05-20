@@ -31,13 +31,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'Logout']);
     Route::post('/user/update', [AuthController::class, 'update']);
     Route::post('/transaction/midtrans', [TransactionController::class,'midtrans']);
-    Route::get('/trending', [UtilityController::class,'trending']);
-    Route::get('/terfavorit', [UtilityController::class,'terfavorit']);
-    Route::post('/like_dislike', [UtilityController::class,'like_dislike']);
-    Route::get('/get_liked_film', [UtilityController::class,'get_liked_film']);
+    Route::get('/film/trending', [UtilityController::class,'trending']);
+    Route::get('/film/terfavorit', [UtilityController::class,'terfavorit']);
+    Route::post('/film/like_dislike', [UtilityController::class,'like_dislike']);
+    Route::get('/film/get_liked_film', [UtilityController::class,'get_liked_film']);
     Route::post('/sendOtp', [OtpController::class, 'sendOtp']);
-    Route::get('/cari/{judul}', [FilmController::class, 'cari']);
-    Route::get('/terkait', [UtilityController::class,'terkait']);
+    Route::get('/film/cari/{judul}', [FilmController::class, 'cari']);
+    Route::get('/film/terkait', [UtilityController::class,'terkait']);
 });
 
 Route::post('/login', [AuthController::class, 'Login']);

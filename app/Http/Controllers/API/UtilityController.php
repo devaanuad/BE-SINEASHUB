@@ -54,7 +54,7 @@ class UtilityController extends Controller
         try {
             $trending_film = cache()->remember('trending',60*60*24,function (){
                 return FilmDetails::with('film:id,tumbnail,judul')
-                    ->select('film_id','rating','kunjungan')->orderBy('kunjungan', 'desc')->get();
+                    ->select('film_id','rating','kunjungan')->orderBy('kunjungan', 'desc')->limit(100)->get();
             });
             return response()->json([
                 'status' => 'success',
@@ -93,32 +93,30 @@ class UtilityController extends Controller
 
     public function terkait()
     {
+        // cache()->clear();
         try {
             $data_genre = [];
             $filtered_film = [];
 
             $trans = Transaction::with('detail:film_id')->where('user_id', \Auth::id())->get();
             foreach ($trans as $data) {
-                // dd($data->film_id);
                 $genre = FilmGenre::where('film_id', $data->film_id)->get();
                 foreach($genre as $j){
                     array_push($data_genre, $j->genre_id);
                 }
             }
-            $film = cache()->remember('terkait',60*60*24,function () {
+            $film = cache()->remember('terkait',60*60*24,function () use ($data_genre) {
                 return Film::distinct()
                     ->join('film_genres','films.id','=','film_genres.film_id')
                     ->whereIntegerInRaw('film_genres.genre_id',array_unique($data_genre))
                     ->selectRaw('films.id,films.judul,films.tumbnail,film_genres.genre_id')
-                    ->groupBy('film_genres.genre_id')
+                    ->limit(100)
                     ->get();
             });
 
-            array_push($filtered_film, $film);
-
             return response()->json([
                 'status' => 'success',
-                'data' => array_unique($filtered_film)
+                'data' => $film
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -131,7 +129,7 @@ class UtilityController extends Controller
     public function get_liked_film(){
         try {
             $liked_film = cache()->remember('liked-film',60*60*24,function (){
-                return LikedFilm::join('films','films.id','=','liked_films.film_id')
+                return LikedFilm::distinct()->join('films','films.id','=','liked_films.film_id')
                     ->where('liked_films.user_id',\Auth::id())->selectRaw('films.id,films.judul,films.tumbnail')
                     ->get();
             });

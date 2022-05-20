@@ -9,6 +9,7 @@ class FilmGenre extends Model
 {
     use HasFactory;
     protected $fillable = ['genre_id','film_id'];
+    // protected $table = "film_genres";
 
     public function film(){
         return $this->belongsTo(Film::class);

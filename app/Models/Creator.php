@@ -15,6 +15,6 @@ class Creator extends Model
     ];
 
     public function film(){
-        $this->hasMany(Film::class,'id','creator_id');
+        return $this->hasMany(Film::class,'id','creator_id');
     }
 }

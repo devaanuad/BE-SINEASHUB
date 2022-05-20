@@ -7,6 +7,9 @@ use App\Models\Film;
 use Illuminate\Http\Request;
 use App\Models\FilmDetails;
 use App\Models\FilmGenre;
+use App\Http\Resources\FilmResource;
+use App\Http\Resources\FilmDetailsResource;
+use App\Http\Resources\SearchResource;
 
 class FilmController extends Controller
 {
@@ -20,7 +23,7 @@ class FilmController extends Controller
         try {
             // cache()->forget('all-film-data');
             $films = cache()->remember('all-film-data', 60*60*24, function () {
-                return Film::with('detail:film_id,rating,tanggal_terbit,kunjungan')->get();
+                return FilmResource::collection(Film::with('detail:film_id,rating,tanggal_terbit,kunjungan')->get());
             });
 
             return response()->json([
@@ -47,7 +50,7 @@ class FilmController extends Controller
         // cache()->clear();
         try {
             $films = cache()->remember("detail-film-$id", 60*60*24, function () use ($id) {
-                return Film::with('film_genres.genres', 'detail', 'aktors', 'creator')->where('id', $id)->get();
+                return FilmDetailsResource::collection(Film::with('film_genres.genres', 'detail', 'aktors', 'creator')->where('id', $id)->get());
             });
             return response()->json([
                 'detail_film' => $films,
@@ -65,7 +68,7 @@ class FilmController extends Controller
     {
         // cache()->clear();
         try {
-            $films = Film::with('film_genres.genres')->where('judul','like', "$judul%")->get();
+            $films = SearchResource::collection(Film::with('film_genres.genres')->where('judul','like', "$judul%")->get());
             return response()->json([
                 'film' => $films,
                 'status' => 'success'
@@ -73,7 +76,7 @@ class FilmController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'tidak dapat menemukan detail film'//$e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
