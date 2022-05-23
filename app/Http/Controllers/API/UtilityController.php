@@ -10,6 +10,8 @@ use App\Models\Film;
 use App\Models\FilmGenre;
 use App\Models\FilmDetails;
 use App\Models\Transaction;
+use App\Models\Genre;
+use App\Http\Resources\FilmResource;
 
 class UtilityController extends Controller
 {
@@ -53,8 +55,14 @@ class UtilityController extends Controller
     {
         try {
             $trending_film = cache()->remember('trending',60*60*24,function (){
-                return FilmDetails::with('film:id,tumbnail,judul')
-                    ->select('film_id','rating','kunjungan')->orderBy('kunjungan', 'desc')->limit(100)->get();
+                return FilmResource::collection(
+                    Film::distinct()
+                        ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                        ->join('film_details', 'films.id', '=', 'film_details.film_id')
+                        ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
+                        ->limit(100)
+                        ->get()->sortBy('kunjungan',0,'desc')
+                );
             });
             return response()->json([
                 'status' => 'success',
@@ -70,14 +78,17 @@ class UtilityController extends Controller
 
     public function terfavorit(Request $req)
     {
+        // cache()->clear();
         try {
             $film_favorit = cache()->remember('terfavorit',60*60*24,function(){
-                return LikedFilm::join('films','films.id','=','liked_films.film_id')
-                    ->selectRaw('films.id,films.judul,films.tumbnail, count(*) as jumlah')
-                    ->groupBy('films.id')
-                    ->orderBy('jumlah','desc')
-                    ->limit(100)
-                    ->get();
+                return FilmResource::collection(
+                    Film::distinct()
+                        ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                        ->join('film_details', 'films.id', '=', 'film_details.film_id')
+                        ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
+                        ->limit(100)
+                        ->get()->sortBy('liked',0,'desc')
+                );
             });
             return response()->json([
                 'status' => 'success',
@@ -106,12 +117,15 @@ class UtilityController extends Controller
                 }
             }
             $film = cache()->remember('terkait',60*60*24,function () use ($data_genre) {
-                return Film::distinct()
-                    ->join('film_genres','films.id','=','film_genres.film_id')
-                    ->whereIntegerInRaw('film_genres.genre_id',array_unique($data_genre))
-                    ->selectRaw('films.id,films.judul,films.tumbnail,film_genres.genre_id')
+                return FilmResource::collection(
+                    Film::distinct()
+                    ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                    ->join('film_details', 'films.id', '=', 'film_details.film_id')
+                    ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
                     ->limit(100)
-                    ->get();
+                    ->whereIntegerInRaw('film_genres.genre_id',array_unique($data_genre))
+                    ->get()
+                );
             });
 
             return response()->json([
@@ -129,13 +143,37 @@ class UtilityController extends Controller
     public function get_liked_film(){
         try {
             $liked_film = cache()->remember('liked-film',60*60*24,function (){
-                return LikedFilm::distinct()->join('films','films.id','=','liked_films.film_id')
-                    ->where('liked_films.user_id',\Auth::id())->selectRaw('films.id,films.judul,films.tumbnail')
-                    ->get();
+                return  FilmResource::collection(
+                    Film::distinct()
+                        ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                        ->join('film_details', 'films.id', '=', 'film_details.film_id')
+                        ->join('liked_films','films.id','=','liked_films.film_id')
+                        ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
+                        ->limit(100)
+                        ->where('liked_films.user_id',\Auth::id())
+                        ->get()
+                );
             });
             return response()->json([
                 'status' => 'success',
                 'data' => $liked_film
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function get_genre(){
+        try {
+            $genre = cache()->remember('genre',60*60*24,function (){
+                return Genre::pluck('name');
+            });
+            return response()->json([
+                'status' => 'success',
+                'data' => $genre
             ]);
         } catch (\Exception $e) {
             return response()->json([

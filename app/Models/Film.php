@@ -13,6 +13,8 @@ class Film extends Model
         'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
     ];
 
+    protected $appends = ['liked'];
+
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -39,5 +41,14 @@ class Film extends Model
 
     public function film_genres(){
         return $this->hasMany(FilmGenre::class);
+    }
+
+    public function liked_films()
+    {
+        return $this->hasMany(LikedFilm::class);
+    }
+
+    public function getLikedAttribute(){
+        return $this->liked_films()->count();
     }
 }
