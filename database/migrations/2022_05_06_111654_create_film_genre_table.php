@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('film_genre', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('film_id')->references('id')->on('films')->cascadeOnDelete();
-            $table->foreignId('genre_id')->references('id')->on('genres')->cascadeOnDelete();
+            $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
+            $table->foreignId('genre_id')->references('id')->on('genres')->onDelete('cascade');
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('film_genre');
+        Schema::dropIfExists('film_genres');
     }
 };

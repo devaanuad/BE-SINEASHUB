@@ -33,8 +33,8 @@ class FilmRequest extends FormRequest
             'rating' => 'nullable',
             'tanggal_terbit' => 'required|date',
             'harga' => 'required|integer',
-            'genre_id' => 'required'
-
+            'genre_id' => 'required|exists:genres,id',
+            'creator_id' => 'required|exists:creators,id'
         ];
     }
 }

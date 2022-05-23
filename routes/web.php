@@ -4,6 +4,8 @@ use App\Http\Controllers\AktorController;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\CreatorController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,13 +19,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.dashboardAdmin');
-});
 
-Route::resource('/admin/genre', GenreController::class);
-Route::resource('/admin/film', FilmController::class);
-Route::resource('/admin/aktor', AktorController::class);
+Route::prefix('admin')
+    // ->middleware('auth')
+    ->group(function(){
+        Route::get('/', function () {
+            return view('layouts.dashboardAdmin');
+        });
+        Route::resource('/genre', GenreController::class);
+        Route::resource('/film', FilmController::class);
+        Route::resource('/aktor', AktorController::class);
+        Route::resource('/creator', CreatorController::class);
+        Route::resource('/transaction', TransactionController::class);
+    });
+
+
+
 
 //maaf bang asep buat route google auth di sini soalnya butuh session buat redirect ke url google sedangkan di api.php gak diset session nya sama laravel
 Route::get('auth/redirect', [AuthController::class, "redirectToProvider"]);

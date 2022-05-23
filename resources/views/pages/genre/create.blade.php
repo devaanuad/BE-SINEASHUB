@@ -26,7 +26,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="name">Nama Pasien</label>
-                        <input type="text" name="name" id="name" placeholder="Masukkan nama pasien" value="{{ old('name') }}" class="form-control">
+                        <input type="text" name="name" id="name" placeholder="Masukkan judul genre" value="{{ old('name') }}" class="form-control">
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block">Simpan</button>

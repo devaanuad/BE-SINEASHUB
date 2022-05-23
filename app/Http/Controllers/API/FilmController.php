@@ -4,8 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Film;
-use Illuminate\Http\Request;
-use App\Models\FilmDetails;
+use App\Http\Resources\FilmResource;
+use App\Http\Resources\FilmDetailsResource;
+use App\Http\Resources\SearchResource;
 
 class FilmController extends Controller
 {
@@ -16,71 +17,64 @@ class FilmController extends Controller
      */
     public function index()
     {
-       try {
-            $films = Film::with('genres', 'detail', 'aktors')->get();
-            if (empty($films)) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'list film',
-                    "data" => []
-                ]);
-            }
-       } catch (\Exception $err) {
+        try {
+            // cache()->forget('all-film-data');
+            $films = cache()->remember('all-film-data', 60*60*24, function () {
+                return FilmResource::collection(Film::with('detail:film_id,rating,tanggal_terbit,kunjungan')->get());
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'list film',
+                "data" => $films
+            ]);
+        } catch (\Exception $err) {
             return response()->json([
                 'status' => 'error',
                 'message' => $err->getMessage(),
-            ],500);
-       }
-        return response()->json([
-            'status' => 'success',
-            'message' => 'list film',
-            "data" => $films
-        ]);
+            ], 500);
+        }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
     /**
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     *
      */
     public function showDetail($id)
     {
-        $films = FilmDetails::where('film_id', $id)->get();
-        return response()->json(['detail_film' => $films]);
+        // cache()->clear();
+        try {
+            $films = cache()->remember("detail-film-$id", 60*60*24, function () use ($id) {
+                return FilmDetailsResource::collection(Film::with('film_genres.genres', 'detail', 'aktors', 'creator')->where('id', $id)->get());
+            });
+            return response()->json([
+                'detail_film' => $films,
+                'status' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function cari($judul)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        // cache()->clear();
+        try {
+            $films = SearchResource::collection(Film::with('film_genres.genres')->where('judul','like', "$judul%")->get());
+            return response()->json([
+                'film' => $films,
+                'status' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
             $table->string('nama_film');
-            $table->integer('harga_beli');
+            $table->integer('total_harga');
             $table->date('tanggal_beli');
             $table->date('tanggal_berakhir');
             $table->string('status')->default('pending');

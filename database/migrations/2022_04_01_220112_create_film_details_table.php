@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('tahun');
             $table->date('tanggal_terbit');
             $table->integer('harga');
-            $table->integer('kunjungan')->nullable();
+            $table->integer('kunjungan')->default(0);
             $table->timestamps();
         });
     }

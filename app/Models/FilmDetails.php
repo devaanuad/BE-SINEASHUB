@@ -17,6 +17,16 @@ class FilmDetails extends Model
         'tanggal_terbit',
         'harga',
         'kunjungan',
-        'sutradara'
+        'creator_id'
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    public function film() {
+        return $this->belongsTo(Film::class);
+    }
+
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FilmRequest;
+use App\Models\Creator;
 use App\Models\Film;
 use App\Models\FilmDetails;
 use App\Models\FilmGenre;
@@ -32,7 +33,8 @@ class FilmController extends Controller
     public function create()
     {
         $genres = Genre::all();
-        return view('pages.film.create', compact('genres'));
+        $creators = Creator::all();
+        return view('pages.film.create', compact('genres', 'creators'));
     }
 
     /**
@@ -43,6 +45,7 @@ class FilmController extends Controller
      */
     public function store(FilmRequest $request)
     {
+        // dd($request->genre_id);
 
         try {
             // simpan gambar
@@ -67,7 +70,7 @@ class FilmController extends Controller
                 'tahun' => Carbon::now()->format('Y'),
                 'tanggal_terbit' => $request->tanggal_terbit,
                 'harga' => $request->harga,
-                'sutradara' => $request->sutradara
+                'creator_id' => $request->creator_id
             ]);
 
             // simpan data relasi film genre

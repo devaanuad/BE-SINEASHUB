@@ -43,6 +43,7 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="{{ route('film.index') }}">Semua Film</a>
             <a class="collapse-item" href="{{ route('aktor.create') }}">Nambah Aktor</a>
+            <a class="collapse-item" href="{{ route('creator.create') }}">Nambah Creator</a>
           </div>
         </div>
       </li>

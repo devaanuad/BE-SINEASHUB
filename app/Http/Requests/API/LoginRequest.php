@@ -25,7 +25,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email',
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:6',
             'remember_me' => 'boolean' // buat remember me nanti ditambahin lagi
         ];
     }
