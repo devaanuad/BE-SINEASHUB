@@ -36,8 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/film/like_dislike', [UtilityController::class,'like_dislike']);
     Route::get('/film/get_liked_film', [UtilityController::class,'get_liked_film']);
     Route::post('/sendOtp', [OtpController::class, 'sendOtp']);
-    Route::get('/film/cari/{judul}', [FilmController::class, 'cari']);
+    Route::get('/film/find_film_by_genre/{genre}', [FilmController::class, 'cari_genre']);
     Route::get('/film/terkait', [UtilityController::class,'terkait']);
+    Route::get('/get_genre', [UtilityController::class,'get_genre']);
+    Route::get('/film/find_film_by_judul/{judul}', [FilmController::class,'cari']);
 });
 
 Route::post('/login', [AuthController::class, 'Login']);

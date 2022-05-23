@@ -14,10 +14,19 @@ class FilmResource extends JsonResource
      */
     public function toArray($request)
     {
+        $newArr = [];
+        foreach($this->film_genres as $gen){
+            array_push($newArr,$gen->genres[0]->name);
+        }
         return [
             'id' => $this->id,
             'judul' => $this->judul,
-            'detail' => $this->detail
+            'thumbnail' => $this->tumbnail,
+            'liked' => $this->liked,
+            'rating' => $this->rating,
+            'view' => $this->kunjungan,
+            'tahun' => $this->tahun,
+            'film_genres' => array_unique($newArr),
         ];
     }
 }

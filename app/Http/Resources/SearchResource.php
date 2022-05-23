@@ -22,9 +22,10 @@ class SearchResource extends JsonResource
             'id' => $this->id,
             'judul' => $this->judul,
             'thumbnail' => $this->tumbnail,
-            'deskripsi' => $this->deskripsi,
-            'url_trailer' => $this->url_trailer,
-            'status' => $this->status,
+            'liked' => $this->liked,
+            'rating' => $this->rating,
+            'view' => $this->kunjungan,
+            'tahun' => $this->tahun,
             'film_genres' => array_unique($newArr),
         ];
     }

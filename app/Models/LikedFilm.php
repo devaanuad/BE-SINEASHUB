@@ -16,6 +16,6 @@ class LikedFilm extends Model
     }
 
     public function films(){
-        $this->hasMany(Film::class);
+        return $this->hasMany(Film::class);
     }
 }
