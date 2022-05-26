@@ -26,6 +26,7 @@ class FilmDetailsFactory extends Factory
             'tanggal_terbit' => '2022-01-01',
             'harga' => mt_rand(10000,10000000),
             'kunjungan' => mt_rand(1,10000),
+            'creator_id' => $this->faker->unique()->numberBetween(1,\App\Models\Creator::count()),
         ]];
     }
 }

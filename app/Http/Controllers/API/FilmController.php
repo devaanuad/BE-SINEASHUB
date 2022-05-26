@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Film;
+use App\Models\FilmDetails;
 use App\Models\Genre;
 use App\Http\Resources\FilmResource;
 use App\Http\Resources\FilmDetailsResource;
@@ -51,10 +52,12 @@ class FilmController extends Controller
      */
     public function showDetail($id)
     {
-        // cache()->clear();
+        cache()->clear();
         try {
             $films = cache()->remember("detail-film-$id", 60*60*24, function () use ($id) {
-                return FilmDetailsResource::collection(Film::with('film_genres.genres', 'detail', 'aktors', 'creator')->whereId($id)->get());
+                return FilmDetailsResource::collection(
+                    Film::with('film_genres.genres', 'detail', 'aktors','detail.creator')->whereId($id)->get()
+                );
             });
             return response()->json([
                 'detail_film' => $films,
@@ -74,7 +77,7 @@ class FilmController extends Controller
         try {
             $films = FilmResource::collection(
                 Film::distinct()
-                ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
                 ->join('film_details', 'films.id', '=', 'film_details.film_id')
                 ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
                 ->where('films.judul','like', "%$judul%")
@@ -99,10 +102,10 @@ class FilmController extends Controller
             // dd($genre);
             $films = FilmResource::collection(
                 Film::distinct()
-                    ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                    ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
                     ->join('film_details', 'films.id', '=', 'film_details.film_id')
                     ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
-                    ->where('film_genres.genre_id', $genre[0]->id)
+                    ->where('film_genre.genre_id', $genre[0]->id)
                     ->get()
             );
 

@@ -34,11 +34,6 @@ class Film extends Model
         return $this->hasMany(Aktor::class);
     }
 
-    public function creator()
-    {
-        return $this->belongsTo(Creator::class);
-    }
-
     public function film_genres(){
         return $this->hasMany(FilmGenre::class);
     }

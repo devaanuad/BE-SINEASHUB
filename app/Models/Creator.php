@@ -15,7 +15,7 @@ class Creator extends Model
         'updated_at',
     ];
 
-    public function film(){
-        return $this->hasMany(Film::class,'id','creator_id');
+    public function film_details(){
+        return $this->belongsTo(FilmDetails::class,'creator_id');
     }
 }
