@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\FilmController;
+use App\Http\Controllers\API\MidtransController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UtilityController;
 use App\Http\Controllers\API\OtpController;
@@ -41,6 +42,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get_genre', [UtilityController::class,'get_genre']);
     Route::get('/film/find_film_by_judul/{judul}', [FilmController::class,'cari']);
 });
+
+Route::post('/a/{id}', [TransactionController::class, 'transaction']);
+Route::post('/midtrans/callback', [MidtransController::class, 'MidtransNotification']);
+Route::get('/midtrans/finis', [MidtransController::class, 'finis']);
+Route::get('/midtrans/unfinis', [MidtransController::class, 'unfinis']);
+Route::get('/midtrans/error', [MidtransController::class, 'error']);
 
 Route::post('/login', [AuthController::class, 'Login']);
 Route::post('/register', [AuthController::class, 'Register']);

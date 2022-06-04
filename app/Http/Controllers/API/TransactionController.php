@@ -9,6 +9,10 @@ use Illuminate\Support\Carbon;
 use App\Models\DetailTransaction;
 use App\Models\Transaction;
 use App\Models\User;
+use Exception;
+use Midtrans\Config;
+use Midtrans\Notification;
+use Midtrans\Snap;
 
 class TransactionController extends Controller
 {
@@ -42,6 +46,73 @@ class TransactionController extends Controller
                 'message' => 'terjadi kesalahan saat melakukan transaksi'//$e->getMessage()
             ],500);
         }
+    }
+
+    // lakukan pembayaran mitrans
+    public function transaction($id)
+    {
+        $transaction = DetailTransaction::with('transaction.user')->findOrFail($id);
+
+        // return response()->json($transaction);
+
+        // set konfigurasi mitrans
+        config::$serverKey = config('midtrans.serverKey');
+        config::$isProduction = config('midtrans.isProduction');
+        config::$isSanitized = config('midtrans.isSanitized');
+        config::$is3ds = config('midtrans.is3ds');
+
+        // buat array untuk di kirim midtrans
+        $params = array(
+            'transactions' => array(
+                'film_id' => $transaction->film_id, //$request->film_id,
+                'user_id' => 1
+            ),
+            'transaction_details' => array(
+                'order_id' => $transaction->id,
+                'gross_amount' =>  (int) $transaction->total_harga + 2500, //$request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
+                'transaction_id' =>   $transaction->transaction_id, //$transaction->id,
+                'nama_film' =>   $transaction->nama_film, //$request->nama_film,
+                'harga_beli' =>   $transaction->total_harga, //$request->harga_beli,
+                'tanggal_beli' => Carbon::now()->format('Y-m-d'),
+                'tanggal_berakhir' => Carbon::now()->addHours($transaction->tanggal_berakhir)->format('Y-m-d'),
+            ),
+            'customer_details' => array(
+                'first_name' => $transaction->transaction->user->name,
+                'email' => $transaction->transaction->user->email,
+            ),
+            'enabled_payments' => array('credit_card', 'bank_transfer', 'gopay'),
+            'credit_card' => array(
+                'secure' => true
+            ),
+            // "expiry"=> array(
+            //     "start_time" => Carbon::now()->format('yyyy-MM-dd hh:mm:ss'),
+            //     "unit" => "minutes",
+            //     "duration"=> 5
+            // ),
+            'vtweb' => array()
+        );
+        // dd($params);
+
+        try {
+            // ambil halaman payment midtrans
+            $paymentUrl = Snap::createTransaction($params)->redirect_url;
+
+            return response()->json(
+                [
+                    'url' => $paymentUrl,
+                ],200
+            );
+
+
+        } catch (Exception $e) {
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'massage' => $e->getMessage()
+                ], $e->getCode()
+            );
+        }
+
     }
 
     //midtrans transaction
