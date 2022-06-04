@@ -57,7 +57,7 @@ class UtilityController extends Controller
             $trending_film = cache()->remember('trending',60*60*24,function (){
                 return FilmResource::collection(
                     Film::distinct()
-                        ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                        ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
                         ->join('film_details', 'films.id', '=', 'film_details.film_id')
                         ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
                         ->limit(100)
@@ -83,7 +83,7 @@ class UtilityController extends Controller
             $film_favorit = cache()->remember('terfavorit',60*60*24,function(){
                 return FilmResource::collection(
                     Film::distinct()
-                        ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                        ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
                         ->join('film_details', 'films.id', '=', 'film_details.film_id')
                         ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
                         ->limit(100)
@@ -119,11 +119,11 @@ class UtilityController extends Controller
             $film = cache()->remember('terkait',60*60*24,function () use ($data_genre) {
                 return FilmResource::collection(
                     Film::distinct()
-                    ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                    ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
                     ->join('film_details', 'films.id', '=', 'film_details.film_id')
                     ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
                     ->limit(100)
-                    ->whereIntegerInRaw('film_genres.genre_id',array_unique($data_genre))
+                    ->whereIntegerInRaw('film_genre.genre_id',array_unique($data_genre))
                     ->get()
                 );
             });
@@ -145,7 +145,7 @@ class UtilityController extends Controller
             $liked_film = cache()->remember('liked-film',60*60*24,function (){
                 return  FilmResource::collection(
                     Film::distinct()
-                        ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
+                        ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
                         ->join('film_details', 'films.id', '=', 'film_details.film_id')
                         ->join('liked_films','films.id','=','liked_films.film_id')
                         ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')

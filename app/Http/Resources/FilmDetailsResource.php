@@ -28,7 +28,7 @@ class FilmDetailsResource extends JsonResource
             'film_genres' => array_unique($newArr),
             'aktors' => AktorResource::collection($this->aktors),
             'details' => new FilmDetailResource($this->detail),
-            'creator' => $this->creator
+            'creator' => $this->detail->creator
         ];
     }
 }

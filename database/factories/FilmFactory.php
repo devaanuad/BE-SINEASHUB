@@ -23,7 +23,6 @@ class FilmFactory extends Factory
             'judul' => $this->faker->name(),
             'deskripsi' => $this->faker->paragraph(),
             'tumbnail' => $this->faker->sentence(1).'jpg',
-            'creator_id' => $this->faker->unique()->numberBetween(1,\App\Models\Creator::count()),
             'url_trailer' => $this->faker->url(),
             'status' => $stat[\mt_rand(0,2)]
         ];

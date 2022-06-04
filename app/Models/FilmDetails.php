@@ -29,4 +29,7 @@ class FilmDetails extends Model
         return $this->belongsTo(Film::class);
     }
 
+    public function creator() {
+        return $this->hasOne(Creator::class,'id','creator_id');
+    }
 }

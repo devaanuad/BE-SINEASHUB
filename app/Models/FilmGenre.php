@@ -9,7 +9,7 @@ class FilmGenre extends Model
 {
     use HasFactory;
     protected $fillable = ['genre_id','film_id'];
-    // protected $table = "film_genres";
+    protected $table = "film_genre";
 
     public $timestamps = false;
 
