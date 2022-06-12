@@ -20,19 +20,16 @@ class FilmController extends Controller
     public function index()
     {
         try {
-            // cache()->forget('all-film-data');
-            // $films = cache()->remember('all-film-data', 60*60*24, function () {
-            //     return FilmResource::collection(
-            //         Film::distinct()
-            //         ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
-            //         ->join('film_details', 'films.id', '=', 'film_details.film_id')
-            //         ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
-            //         ->get()
-            //     );
-            // });
-
-            $films = Film::with('genres', 'detail')->get();
-
+            cache()->forget('all-film-data');
+            $films = cache()->remember('all-film-data', 60*60*24, function () {
+                return FilmResource::collection(
+                    Film::distinct()
+                    ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
+                    ->join('film_details', 'films.id', '=', 'film_details.film_id')
+                    ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
+                    ->get()
+                );
+            });
 
             return response()->json([
                 'status' => 'success',
