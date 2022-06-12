@@ -41,13 +41,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/film/terkait', [UtilityController::class,'terkait']);
     Route::get('/get_genre', [UtilityController::class,'get_genre']);
     Route::get('/film/find_film_by_judul/{judul}', [FilmController::class,'cari']);
-});
 
-Route::post('/a/{id}', [TransactionController::class, 'transaction']);
-Route::post('/midtrans/callback', [MidtransController::class, 'MidtransNotification']);
-Route::get('/midtrans/finis', [MidtransController::class, 'finis']);
-Route::get('/midtrans/unfinis', [MidtransController::class, 'unfinis']);
-Route::get('/midtrans/error', [MidtransController::class, 'error']);
+
+    // midtrans transaction
+    Route::post('/transaction/midtrans', [TransactionController::class, 'transactionMidtrans']);
+
+    Route::post('/midtrans/callback', [MidtransController::class, 'MidtransNotification']);
+    Route::get('/midtrans/finis', [MidtransController::class, 'finis']);
+    Route::get('/midtrans/unfinis', [MidtransController::class, 'unfinis']);
+    Route::get('/midtrans/error', [MidtransController::class, 'error']);
+});
 
 Route::post('/login', [AuthController::class, 'Login']);
 Route::post('/register', [AuthController::class, 'Register']);
