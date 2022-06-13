@@ -25,22 +25,23 @@ use App\Http\Controllers\API\OtpController;
 // });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/film', [FilmController::class, 'index']);
-    Route::get('/film/detail/{id}', [FilmController::class, 'showDetail']);
-    Route::post('/transaction', [TransactionController::class, 'store']);
+
+    Route::get('/film', [FilmController::class, 'index']); // list film
+    Route::get('/film/detail/{id}', [FilmController::class, 'showDetail']); // detail film
+    Route::post('/transaction', [TransactionController::class, 'store']); // beli film
     Route::get('/getUserTransaction', [TransactionController::class, 'get_user_transaction']);
-    Route::post('/logout', [AuthController::class, 'Logout']);
-    Route::post('/user/update', [AuthController::class, 'update']);
+    Route::post('/logout', [AuthController::class, 'Logout']); // keluar
+    Route::post('/user/update', [AuthController::class, 'update']); // update user
     Route::post('/transaction/midtrans', [TransactionController::class,'midtrans']);
-    Route::get('/film/trending', [UtilityController::class,'trending']);
-    Route::get('/film/terfavorit', [UtilityController::class,'terfavorit']);
+    Route::get('/film/trending', [UtilityController::class,'trending']);  // list folm trending
+    Route::get('/film/terfavorit', [UtilityController::class,'terfavorit']);  // list film favorid
     Route::post('/film/like_dislike', [UtilityController::class,'like_dislike']);
     Route::get('/film/get_liked_film', [UtilityController::class,'get_liked_film']);
     Route::post('/sendOtp', [OtpController::class, 'sendOtp']);
-    Route::get('/film/find_film_by_genre/{genre}', [FilmController::class, 'cari_genre']);
-    Route::get('/film/terkait', [UtilityController::class,'terkait']);
+    Route::get('/film/find_film_by_genre/{genre}', [FilmController::class, 'cari_genre']); // list film berdasarkan genre
+    Route::get('/film/terkait', [UtilityController::class,'terkait']); // list film terkait
     Route::get('/get_genre', [UtilityController::class,'get_genre']);
-    Route::get('/film/find_film_by_judul/{judul}', [FilmController::class,'cari']);
+    Route::get('/film/find_film_by_judul/{judul}', [FilmController::class,'cari']); // list film berdasarkan judul
 
 
     // midtrans transaction
