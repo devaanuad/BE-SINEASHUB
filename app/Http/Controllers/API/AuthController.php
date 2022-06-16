@@ -107,7 +107,9 @@ class AuthController extends Controller
     public function Logout()
     {
         try{
-            request()->user()->currentAccessToken()->delete();
+            // request()->user()->currentAccessToken()->delete();
+            $user = request()->user();
+            $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil Logout',
