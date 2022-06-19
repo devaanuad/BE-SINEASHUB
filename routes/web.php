@@ -20,12 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::prefix('admin')
-    // ->middleware('auth')
+Route::middleware('auth', 'admin')
     ->group(function(){
-        Route::get('/', function () {
-            return view('layouts.dashboardAdmin');
-        });
+        Route::view('/', 'pages.dashboard');
         Route::resource('/genre', GenreController::class);
         Route::resource('/film', FilmController::class);
         Route::resource('/aktor', AktorController::class);

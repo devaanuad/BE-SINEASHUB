@@ -49,11 +49,32 @@ class TransactionController extends Controller
     }
 
     // lakukan pembayaran mitrans
-    public function transaction($id)
+    public function transaction(Request $request)
     {
-        $transaction = DetailTransaction::with('transaction.user')->findOrFail($id);
+        try {
+            $user = Auth::user();
+            $transaction = Transaction::create([
+                'user_id' => $user->id,
+                'film_id' => $request->film_id,
+            ]);
 
-        // return response()->json($transaction);
+            //create detail transaction
+            $detail_transaction = DetailTransaction::create([
+                'transaction_id' => $transaction->id,
+                'film_id' => $request->film_id,
+                'nama_film' => $request->nama_film,
+                'total_harga' => $request->total_harga,
+                'tanggal_beli' => Carbon::now()->format('Y-m-d'),
+                'tanggal_berakhir' => Carbon::now()->addHours($request->film_expire)->format('Y-m-d')
+            ]);
+
+            // dd($detail_transaction);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'terjadi kesalahan saat melakukan transaksi ' . $e->getMessage()
+            ], 500);
+        }
 
         // set konfigurasi mitrans
         config::$serverKey = config('midtrans.serverKey');
@@ -65,22 +86,21 @@ class TransactionController extends Controller
         $params = array(
             'transactions' => array(
                 'film_id' => $transaction->film_id, //$request->film_id,
-                'user_id' => 1
+                'user_id' => $transaction->user_id, //$request->user_id,
             ),
             'transaction_details' => array(
                 'order_id' => $transaction->id,
-                'gross_amount' =>  (int) $transaction->total_harga + 2500, //$request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
-                'transaction_id' =>   $transaction->transaction_id, //$transaction->id,
-                'nama_film' =>   $transaction->nama_film, //$request->nama_film,
-                'harga_beli' =>   $transaction->total_harga, //$request->harga_beli,
-                'tanggal_beli' => Carbon::now()->format('Y-m-d'),
-                'tanggal_berakhir' => Carbon::now()->addHours($transaction->tanggal_berakhir)->format('Y-m-d'),
+                'gross_amount' =>  (int) $detail_transaction->total_harga + 2500, //$request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
+                'nama_film' =>   $detail_transaction->nama_film, //$request->nama_film,
+                'harga_beli' =>   $detail_transaction->total_harga, //$request->harga_beli,
+                'tanggal_beli' => $detail_transaction->tanggal_beli,
+                'tanggal_berakhir' => Carbon::now()->addHours($detail_transaction->tanggal_berakhir)->format('Y-m-d'),
             ),
             'customer_details' => array(
-                'first_name' => $transaction->transaction->user->name,
-                'email' => $transaction->transaction->user->email,
+                'first_name' => $user->name,
+                'email' => $user->email,
             ),
-            'enabled_payments' => array('credit_card', 'bank_transfer', 'gopay'),
+            'enabled_payments' => array('credit_card', 'bank_transfer', 'gopay', 'shopeepay', 'qris'),
             'credit_card' => array(
                 'secure' => true
             ),
@@ -100,63 +120,19 @@ class TransactionController extends Controller
             return response()->json(
                 [
                     'url' => $paymentUrl,
-                ],200
+                ],
+                200
             );
-
-
         } catch (Exception $e) {
             return response()->json(
                 [
                     'status' => 'error',
                     'massage' => $e->getMessage()
-                ], $e->getCode()
+                ],
+                $e->getCode()
             );
         }
 
-    }
-
-    //midtrans transaction
-    public function midtrans(Request $request)
-    {
-        try {
-            \Midtrans\Config::$serverKey = 'SB-Mid-server-0PLmsmjandYEXvNR8-54jM_T';
-            \Midtrans\Config::$isProduction = false;
-            \Midtrans\Config::$isSanitized = true;
-            \Midtrans\Config::$is3ds = true;
-
-            $user = User::where('id', Auth::id())->first();
-            $params = array(
-                'transaction' => array(
-                    'film_id' => 1,//$request->film_id,
-                    'user_id' => request()->user()->id
-                ),
-                'transaction_details' => array(
-                    'order_id' => rand(),
-                    'gross_amount' =>   61000,//$request->harga_beli + 2500, //2500 biaya admin sementara sampe ditentuin
-                    'transaction_id' =>   90,//$transaction->id,
-                    'nama_film' =>   'bla',//$request->nama_film,
-                    'harga_beli' =>   56000,//$request->harga_beli,
-                    'tanggal_beli' => Carbon::now()->format('Y-m-d'),
-                    'tanggal_berakhir' => Carbon::now()->addHours($request->film_expire)->format('Y-m-d'),
-                ),
-                'user_details' => array(
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'phone' => $user->no_hp ? $user->no_hp : '-',
-                ),
-            );
-
-            $snapToken = \Midtrans\Snap::getSnapToken($params);
-            return response()->json([
-                'transaction_token' => $snapToken,
-                'redirect_url' => "https://app.sandbox.midtrans.com/snap/v2/vtweb/$snapToken"
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ],500);
-        }
     }
 
     public function get_user_transaction(){
@@ -166,7 +142,7 @@ class TransactionController extends Controller
                 'status' => 'success',
                 'data' => $trans
             ]);
-        } catch (\Exception $th) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
