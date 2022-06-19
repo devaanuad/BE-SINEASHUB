@@ -24,8 +24,8 @@ class FilmResource extends JsonResource
             'thumbnail' => $this->tumbnail,
             'liked' => $this->liked,
             'rating' => $this->rating,
-            'view' => $this->kunjungan,
-            'tahun' => $this->tahun,
+            'view' => $this->detail->kunjungan,
+            'tahun' => $this->detail->tahun,
             'film_genres' => array_unique($newArr),
         ];
     }

@@ -13,7 +13,7 @@ class Film extends Model
         'judul', 'deskripsi', 'tumbnail','url_trailer', 'status'
     ];
 
-    protected $appends = ['liked'];
+    protected $appends = ['liked','rating'];
 
     protected $hidden = [
         'created_at',
@@ -45,5 +45,10 @@ class Film extends Model
 
     public function getLikedAttribute(){
         return $this->liked_films()->count();
+    }
+
+    //get average rating attribute
+    public function getRatingAttribute(){
+        return $this->hasMany(Rating::class)->selectRaw('truncate(avg(rating),1) as rating')->first()->rating;
     }
 }

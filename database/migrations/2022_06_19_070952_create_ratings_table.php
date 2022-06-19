@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('film_details', function (Blueprint $table) {
+        Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('film_id')->references('id')->on('films')->onDelete('cascade');
-            $table->string('url_film')->nullable();
-            $table->string('tahun');
-            $table->date('tanggal_terbit');
-            $table->integer('harga');
-            $table->integer('kunjungan')->default(0);
+            $table->unsignedBigInteger('film_id');
+            $table->unsignedBigInteger('user_id');
+            $table->integer('rating');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('film_details');
+        Schema::dropIfExists('ratings');
     }
 };

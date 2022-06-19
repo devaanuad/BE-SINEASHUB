@@ -29,5 +29,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         \App\Models\FilmGenre::factory(50)->create();
+        \App\Models\Rating::factory(100)->create();
     }
 }

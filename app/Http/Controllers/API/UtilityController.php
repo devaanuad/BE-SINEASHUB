@@ -12,6 +12,7 @@ use App\Models\FilmDetails;
 use App\Models\Transaction;
 use App\Models\Genre;
 use App\Http\Resources\FilmResource;
+use App\Models\Rating;
 
 class UtilityController extends Controller
 {
@@ -174,6 +175,25 @@ class UtilityController extends Controller
             return response()->json([
                 'status' => 'success',
                 'data' => $genre
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function user_rating(Request $req){
+        try {
+            Rating::create([
+                'user_id' => \Auth::id(),
+                'film_id' => $req->film_id,
+                'rating' => $req->rating
+            ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Rating berhasil disimpan'
             ]);
         } catch (\Exception $e) {
             return response()->json([

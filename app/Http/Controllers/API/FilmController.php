@@ -20,14 +20,10 @@ class FilmController extends Controller
     public function index()
     {
         try {
-            // cache()->forget('all-film-data');
+            cache()->forget('all-film-data');
             $films = cache()->remember('all-film-data', 60*60*24, function () {
                 return FilmResource::collection(
-                    Film::distinct()
-                    ->join('film_genres', 'films.id', '=', 'film_genres.film_id')
-                    ->join('film_details', 'films.id', '=', 'film_details.film_id')
-                    ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
-                    ->get()
+                    Film::distinct()->with('detail','film_genres.genres')->get()
                 );
             });
 
@@ -76,12 +72,7 @@ class FilmController extends Controller
         // cache()->clear();
         try {
             $films = FilmResource::collection(
-                Film::distinct()
-                ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
-                ->join('film_details', 'films.id', '=', 'film_details.film_id')
-                ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
-                ->where('films.judul','like', "%$judul%")
-                ->get()
+                Film::distinct()->with('detail','film_genres.genres')->where('judul', 'like', "%$judul%")->get()
             );
             return response()->json([
                 'film' => $films,

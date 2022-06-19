@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/film/terkait', [UtilityController::class,'terkait']);
     Route::get('/get_genre', [UtilityController::class,'get_genre']);
     Route::get('/film/find_film_by_judul/{judul}', [FilmController::class,'cari']);
+    Route::post('/film/user_rating', [UtilityController::class,'user_rating']);
 });
 
 Route::post('/a/{id}', [TransactionController::class, 'transaction']);
