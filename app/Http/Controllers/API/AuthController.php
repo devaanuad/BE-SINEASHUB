@@ -27,17 +27,17 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !\Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Akun tidak terdaftar','status' => 'error'], 401);
+            return response()->json(['message' => 'Akun tidak terdaftar', 'status' => 'error'], 401);
         }
 
         $token = $user->createToken('LoginToken', ['auth'])->plainTextToken;
 
         return response()->json([
-                'status' => 'success',
-                'message' => 'Berhasil Login',
-                'data' => $user,
-                'tokenLogin' => $token
-            ]);
+            'status' => 'success',
+            'message' => 'Berhasil Login',
+            'data' => $user,
+            'tokenLogin' => $token
+        ]);
     }
     public function Register(RegisterRequest $request)
     {
@@ -76,7 +76,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'Error',
-                'error_message' => $e->getMessage()//'tidak dapat mendapatkan data user'
+                'error_message' => $e->getMessage() //'tidak dapat mendapatkan data user'
             ], 500);
         }
         // check if they're an existing user
@@ -92,21 +92,21 @@ class AuthController extends Controller
             $newUser->email           = $user->email;
             $newUser->google_id       = $user->id;
             $newUser->save();
-	        $token = $existingUser->createToken('LoginToken', ['auth'])->plainTextToken;
+            $token = $existingUser->createToken('LoginToken', ['auth'])->plainTextToken;
             auth()->login($newUser, true);
         }
 
         return response()->json([
-                'status' => 'success',
-                'message' => 'Berhasil Login',
-                'data' => $user,
-                'tokenLogin' => $token
-            ]);
+            'status' => 'success',
+            'message' => 'Berhasil Login',
+            'data' => $user,
+            'tokenLogin' => $token
+        ]);
     }
 
     public function Logout()
     {
-        try{
+        try {
             // request()->user()->currentAccessToken()->delete();
             $user = request()->user();
             $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
@@ -114,7 +114,7 @@ class AuthController extends Controller
                 'status' => 'success',
                 'message' => 'Berhasil Logout',
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
@@ -136,7 +136,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'data tidak lengkap',
-            ],400);
+            ], 400);
         }
         // $user->update($request->all());
         return response()->json([
@@ -144,7 +144,8 @@ class AuthController extends Controller
             'message' => 'Berhasil Update',
         ]);
     }
-    public function change_password() {
+    public function change_password()
+    {
         try {
             $user = $request->user();
             $user->update([
@@ -158,7 +159,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'terjadi kesalahan saat merubah password',
-            ],500);
+            ], 500);
         }
     }
 }

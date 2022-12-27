@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('tanggal_terbit');
             $table->integer('harga');
             $table->integer('kunjungan')->default(0);
+            $table->integer('rating')->default(0);
             $table->timestamps();
         });
     }

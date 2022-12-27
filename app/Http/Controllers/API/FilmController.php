@@ -21,17 +21,9 @@ class FilmController extends Controller
     {
         try {
             cache()->forget('all-film-data');
-            $films = cache()->remember('all-film-data', 60*60*24, function () {
+            $films = cache()->remember('all-film-data', 60 * 60 * 24, function () {
                 return FilmResource::collection(
-<<<<<<< HEAD
-                    Film::distinct()->with('detail','film_genres.genres')->get()
-=======
-                    Film::distinct()
-                    ->join('film_genre', 'films.id', '=', 'film_genre.film_id')
-                    ->join('film_details', 'films.id', '=', 'film_details.film_id')
-                    ->selectRaw('films.id, films.judul, films.tumbnail, film_details.tahun, film_details.rating, film_details.kunjungan')
-                    ->get()
->>>>>>> de64e4180acdf98d8a2d9d8d2aaf15fddd4bf0f1
+                    Film::distinct()->with('detail', 'film_genres.genres')->get()
                 );
             });
 
@@ -58,9 +50,9 @@ class FilmController extends Controller
     {
         cache()->clear();
         try {
-            $films = cache()->remember("detail-film-$id", 60*60*24, function () use ($id) {
+            $films = cache()->remember("detail-film-$id", 60 * 60 * 24, function () use ($id) {
                 return FilmDetailsResource::collection(
-                    Film::with('film_genres.genres', 'detail', 'aktors','detail.creator')->whereId($id)->get()
+                    Film::with('film_genres.genres', 'detail', 'aktors', 'detail.creator')->whereId($id)->get()
                 );
             });
             return response()->json([
@@ -80,7 +72,7 @@ class FilmController extends Controller
         // cache()->clear();
         try {
             $films = FilmResource::collection(
-                Film::distinct()->with('detail','film_genres.genres')->where('judul', 'like', "%$judul%")->get()
+                Film::distinct()->with('detail', 'film_genres.genres')->where('judul', 'like', "%$judul%")->get()
             );
             return response()->json([
                 'film' => $films,
